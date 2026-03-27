@@ -10,13 +10,13 @@
     </title>
     <style>
         body {
-            margin-top: 305px;
-            margin-bottom: 75px;
+            margin-top: 340px;
+            margin-bottom: 150px;
         }
 
         header {
             position: fixed;
-            top: -20px;
+            top: -22.5px;
             width: 100%;
         }
 
@@ -24,7 +24,7 @@
             position: fixed;
             left: 0px;
             right: 0px;
-            bottom: -20px;
+            bottom: -22.5px;
             width: 100%;
         }
         .page-break {
@@ -33,6 +33,11 @@
     </style>
 </head>
 <body>
+    @php
+        $anio_cabecera = date('Y');
+        $proceso_cabecera = date('n') <= 6 ? 'I' : 'II';
+    @endphp
+
     @if ($tipo === 'regular')
         <header>
             <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0rem;">
@@ -62,20 +67,25 @@
                     </tr>
                 </thead>
             </table>
-            <div style="margin-top: 0.4rem; text-align: center;">
+            <div style="margin-top: 0.5rem; text-align: right;">
+                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
+                    Fecha de emisión: {{ date('d/m/Y') }}
+                </span>
+            </div>
+            <div style="margin-top: 0.5rem; text-align: center;">
                 <span style="text-align: center; font-weight: 700; font-size: 0.9rem">
                     REGISTRO FINAL DE EVALUACIÓN ACADÉMICA
                 </span>
             </div>
             <div style="margin-top: 0.2rem; text-align: center;">
                 <span style="text-align: center; font-weight: 700; font-size: 0.9rem">
-                    {{ $admision_año }} - {{ $ciclo }}
+                    {{ $anio_cabecera }} - {{ $proceso_cabecera }}
                 </span>
             </div>
-            <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0rem;">
+            <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0.5rem;">
                 <tbody>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 {{ $programa }}:
                             </div>
@@ -87,7 +97,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Mención:
                             </div>
@@ -99,7 +109,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Curso:
                             </div>
@@ -111,7 +121,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Cod. Curso:
                             </div>
@@ -123,7 +133,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Docente:
                             </div>
@@ -135,7 +145,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Cod. Docente:
                             </div>
@@ -147,7 +157,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Créditos:
                             </div>
@@ -159,7 +169,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Ciclo:
                             </div>
@@ -171,7 +181,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Grupo:
                             </div>
@@ -183,7 +193,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Tipo de Acta:
                             </div>
@@ -198,18 +208,33 @@
             </table>
         </header>
         <footer>
-            <div style="margin-top: 1.5rem; text-align: right;">
-                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
-                    Fecha de emisión: {{ date('d/m/Y') }}
+            <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0.5rem;">
+                <tbody>
+                    <tr>
+                        <td style="width: 33%; text-align: left; font-weight: 400; font-size: 0.65rem ">
+                            Fecha de inicio del curso: ____/____/20___
+                        </td>
+                        <td style="width: 34%; text-align: center; font-weight: 400; font-size: 0.65rem">
+                            Fecha de fin del curso: ____/____/20___
+                        </td>
+                        <td style="width: 33%; text-align: right; font-weight: 400; font-size: 0.65rem">
+                            Fecha de entrega de acta: ____/____/20___
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 3rem; text-align: right;">
+                <span style="font-weight: 400; font-size: 0.7rem">
+                    ___________________________________
                 </span>
             </div>
-            <div style="margin-top: 2.5rem; text-align: right;">
-                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
+            <div style="margin-top: 0rem; text-align: right;">
+                <span style="font-weight: 400; font-size: 0.7rem">
                     {{ $docente }}
                 </span>
             </div>
             <div style="margin-top: 0rem; text-align: right;">
-                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
+                <span style="font-weight: 400; font-size: 0.7rem">
                     Responsable del curso
                 </span>
             </div>
@@ -327,20 +352,25 @@
                     </tr>
                 </thead>
             </table>
-            <div style="margin-top: 0.4rem; text-align: center;">
+            <div style="margin-top: 0.5rem; text-align: right;">
+                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
+                    Fecha de emisión: {{ date('d/m/Y') }}
+                </span>
+            </div>
+            <div style="margin-top: 0.5rem; text-align: center;">
                 <span style="text-align: center; font-weight: 700; font-size: 0.9rem">
                     REGISTRO FINAL DE EVALUACIÓN ACADÉMICA
                 </span>
             </div>
             <div style="margin-top: 0.2rem; text-align: center;">
                 <span style="text-align: center; font-weight: 700; font-size: 0.9rem">
-                    {{ $admision_año }} - {{ $ciclo }}
+                    {{ $anio_cabecera }} - {{ $proceso_cabecera }}
                 </span>
             </div>
-            <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0rem;">
+            <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0.5rem;">
                 <tbody>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 {{ $programa }}:
                             </div>
@@ -352,7 +382,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Mención:
                             </div>
@@ -364,7 +394,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Curso:
                             </div>
@@ -376,7 +406,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Cod. Curso:
                             </div>
@@ -388,7 +418,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Docente:
                             </div>
@@ -400,7 +430,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Cod. Docente:
                             </div>
@@ -412,7 +442,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Créditos:
                             </div>
@@ -424,7 +454,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Ciclo:
                             </div>
@@ -436,7 +466,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Grupo:
                             </div>
@@ -448,7 +478,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Tipo de Acta:
                             </div>
@@ -463,18 +493,33 @@
             </table>
         </header>
         <footer>
-            <div style="margin-top: 1.5rem; text-align: right;">
-                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
-                    Fecha de emisión: {{ date('d/m/Y') }}
+            <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0.5rem;">
+                <tbody>
+                    <tr>
+                        <td style="width: 33%; text-align: left; font-weight: 400; font-size: 0.65rem ">
+                            Fecha de inicio del curso: ____/____/20___
+                        </td>
+                        <td style="width: 34%; text-align: center; font-weight: 400; font-size: 0.65rem">
+                            Fecha de fin del curso: ____/____/20___
+                        </td>
+                        <td style="width: 33%; text-align: right; font-weight: 400; font-size: 0.65rem">
+                            Fecha de entrega de acta: ____/____/20___
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 3rem; text-align: right;">
+                <span style="font-weight: 400; font-size: 0.7rem">
+                    ___________________________________
                 </span>
             </div>
-            <div style="margin-top: 2.5rem; text-align: right;">
-                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
+            <div style="margin-top: 0rem; text-align: right;">
+                <span style="font-weight: 400; font-size: 0.7rem">
                     {{ $docente }}
                 </span>
             </div>
             <div style="margin-top: 0rem; text-align: right;">
-                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
+                <span style="font-weight: 400; font-size: 0.7rem">
                     Responsable del curso
                 </span>
             </div>
@@ -599,20 +644,25 @@
                     </tr>
                 </thead>
             </table>
-            <div style="margin-top: 0.4rem; text-align: center;">
+            <div style="margin-top: 0.5rem; text-align: right;">
+                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
+                    Fecha de emisión: {{ date('d/m/Y') }}
+                </span>
+            </div>
+            <div style="margin-top: 0.5rem; text-align: center;">
                 <span style="text-align: center; font-weight: 700; font-size: 0.9rem">
                     REGISTRO FINAL DE EVALUACIÓN ACADÉMICA
                 </span>
             </div>
             <div style="margin-top: 0.2rem; text-align: center;">
                 <span style="text-align: center; font-weight: 700; font-size: 0.9rem">
-                    {{ $admision_año }} - {{ $ciclo }}
+                    {{ $anio_cabecera }} - {{ $proceso_cabecera }}
                 </span>
             </div>
-            <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0rem;">
+            <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0.5rem;">
                 <tbody>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 {{ $programa }}:
                             </div>
@@ -624,7 +674,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Mención:
                             </div>
@@ -636,7 +686,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Curso:
                             </div>
@@ -648,7 +698,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Cod. Curso:
                             </div>
@@ -660,7 +710,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Docente:
                             </div>
@@ -672,7 +722,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Cod. Docente:
                             </div>
@@ -684,7 +734,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Créditos:
                             </div>
@@ -696,7 +746,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Ciclo:
                             </div>
@@ -708,7 +758,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Grupo:
                             </div>
@@ -720,7 +770,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Tipo de Acta:
                             </div>
@@ -735,99 +785,116 @@
             </table>
         </header>
         <footer>
-            <div style="margin-top: 1.5rem; text-align: right;">
-                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
-                    Fecha de emisión: {{ date('d/m/Y') }}
+            <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0rem;">
+                <tbody>
+                    <tr>
+                        <td style="width: 33%; text-align: left; font-weight: 400; font-size: 0.65rem ">
+                            Fecha de inicio del curso: ____/____/20___
+                        </td>
+                        <td style="width: 34%; text-align: center; font-weight: 400; font-size: 0.65rem">
+                            Fecha de fin del curso: ____/____/20___
+                        </td>
+                        <td style="width: 33%; text-align: right; font-weight: 400; font-size: 0.65rem">
+                            Fecha de entrega de acta: ____/____/20___
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 3rem; text-align: right;">
+                <span style="font-weight: 400; font-size: 0.7rem">
+                    ___________________________________
                 </span>
             </div>
-            <div style="margin-top: 2.5rem; text-align: right;">
-                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
+            <div style="margin-top: 0rem; text-align: right;">
+                <span style="font-weight: 400; font-size: 0.7rem">
                     {{ $docente }}
                 </span>
             </div>
             <div style="margin-top: 0rem; text-align: right;">
-                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
+                <span style="font-weight: 400; font-size: 0.7rem">
                     Responsable del curso
                 </span>
             </div>
         </footer>
-        <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0rem; border-collapse: collapse;">
-            <thead>
-                <tr style="border: 1px solid black; padding: 8px; font-size: 0.6rem">
-                    <th rowspan="2" style="border: 1px solid black; padding: 8px;">
-                        Nro
-                    </th>
-                    <th rowspan="2" style="border: 1px solid black; padding: 8px;">
-                        Código
-                    </th>
-                    <th rowspan="2" style="border: 1px solid black; padding: 8px; width: 190px;">
-                        Alumno
-                    </th>
-                    <th colspan="3" style="border: 1px solid black; padding: 8px;">
-                        Promedios
-                    </th>
-                    <th colspan="2" style="border: 1px solid black; padding: 8px;">
-                        Promedio Final
-                    </th>
-                </tr>
-                <tr style="border: 1px solid black; padding: 8px; font-size: 0.6rem">
-                    <th style="border: 1px solid black; padding: 8px;">
-                        Evaluación<br>Permanente
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px;">
-                        Evaluación<br>Medio Curso
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px;">
-                        Evaluación<br>Final
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px;">
-                        Número
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px;">
-                        Letras
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @php
-                    $letras = array('Cero', 'Uno', 'Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis', 'Siete', 'Ocho', 'Nueve', 'Diez', 'Once', 'Doce', 'Trece', 'Catorce', 'Quince', 'Dieciséis', 'Diecisiete', 'Dieciocho', 'Diecinueve', 'Veinte');
-                @endphp
-                <tr style="border: 1px solid black; padding: 4px; font-size: 0.5rem">
-                    <td style="border: 1px solid black; padding: 4px;" align="center">
-                        1
-                    </td>
-                    <td style="border: 1px solid black; padding: 4px;" align="center">
-                        {{ $reingreso->admitido_codigo }}
-                    </td>
-                    <td style="border: 1px solid black; padding: 4px;">
-                        {{ $reingreso->nombre_completo }}
-                    </td>
-                    <td style="border: 1px solid black; padding: 4px;" align="center">
-                        {{ $reingreso->nota_evaluacion_permanente ? round($reingreso->nota_evaluacion_permanente) : '-' }}
-                    </td>
-                    <td style="border: 1px solid black; padding: 4px;" align="center">
-                        {{ $reingreso->nota_evaluacion_medio_curso ? round($reingreso->nota_evaluacion_medio_curso) : '-' }}
-                    </td>
-                    <td style="border: 1px solid black; padding: 4px;" align="center">
-                        {{ $reingreso->nota_evaluacion_final ? round($reingreso->nota_evaluacion_final) : '-' }}
-                    </td>
-                    <td style="border: 1px solid black; padding: 4px; {{ $reingreso->nota_promedio_final < 14 ? 'color: #ff0000;' : '' }}" align="center">
-                        @if ($reingreso->estado == 3)
-                            NSP
-                        @else
-                            {{ round($reingreso->nota_promedio_final) }}
-                        @endif
-                    </td>
-                    <td style="border: 1px solid black; padding: 4px; {{ $reingreso->nota_promedio_final < 14 ? 'color: #ff0000;' : '' }}">
-                        @if ($reingreso->estado == 3)
-                            NSP
-                        @else
-                            {{ $letras[$nota_promedio_final] }}
-                        @endif
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <main>
+            <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0rem; border-collapse: collapse;">
+                <thead>
+                    <tr style="border: 1px solid black; padding: 8px; font-size: 0.6rem">
+                        <th rowspan="2" style="border: 1px solid black; padding: 8px;">
+                            Nro
+                        </th>
+                        <th rowspan="2" style="border: 1px solid black; padding: 8px;">
+                            Código
+                        </th>
+                        <th rowspan="2" style="border: 1px solid black; padding: 8px; width: 190px;">
+                            Alumno
+                        </th>
+                        <th colspan="3" style="border: 1px solid black; padding: 8px;">
+                            Promedios
+                        </th>
+                        <th colspan="2" style="border: 1px solid black; padding: 8px;">
+                            Promedio Final
+                        </th>
+                    </tr>
+                    <tr style="border: 1px solid black; padding: 8px; font-size: 0.6rem">
+                        <th style="border: 1px solid black; padding: 8px;">
+                            Evaluación<br>Permanente
+                        </th>
+                        <th style="border: 1px solid black; padding: 8px;">
+                            Evaluación<br>Medio Curso
+                        </th>
+                        <th style="border: 1px solid black; padding: 8px;">
+                            Evaluación<br>Final
+                        </th>
+                        <th style="border: 1px solid black; padding: 8px;">
+                            Número
+                        </th>
+                        <th style="border: 1px solid black; padding: 8px;">
+                            Letras
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                        $letras = array('Cero', 'Uno', 'Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis', 'Siete', 'Ocho', 'Nueve', 'Diez', 'Once', 'Doce', 'Trece', 'Catorce', 'Quince', 'Dieciséis', 'Diecisiete', 'Dieciocho', 'Diecinueve', 'Veinte');
+                    @endphp
+                    <tr style="border: 1px solid black; padding: 4px; font-size: 0.5rem">
+                        <td style="border: 1px solid black; padding: 4px;" align="center">
+                            1
+                        </td>
+                        <td style="border: 1px solid black; padding: 4px;" align="center">
+                            {{ $reingreso->admitido_codigo }}
+                        </td>
+                        <td style="border: 1px solid black; padding: 4px;">
+                            {{ $reingreso->nombre_completo }}
+                        </td>
+                        <td style="border: 1px solid black; padding: 4px;" align="center">
+                            {{ $reingreso->nota_evaluacion_permanente ? round($reingreso->nota_evaluacion_permanente) : '-' }}
+                        </td>
+                        <td style="border: 1px solid black; padding: 4px;" align="center">
+                            {{ $reingreso->nota_evaluacion_medio_curso ? round($reingreso->nota_evaluacion_medio_curso) : '-' }}
+                        </td>
+                        <td style="border: 1px solid black; padding: 4px;" align="center">
+                            {{ $reingreso->nota_evaluacion_final ? round($reingreso->nota_evaluacion_final) : '-' }}
+                        </td>
+                        <td style="border: 1px solid black; padding: 4px; {{ $reingreso->nota_promedio_final < 14 ? 'color: #ff0000;' : '' }}" align="center">
+                            @if ($reingreso->estado == 3)
+                                NSP
+                            @else
+                                {{ round($reingreso->nota_promedio_final) }}
+                            @endif
+                        </td>
+                        <td style="border: 1px solid black; padding: 4px; {{ $reingreso->nota_promedio_final < 14 ? 'color: #ff0000;' : '' }}">
+                            @if ($reingreso->estado == 3)
+                                NSP
+                            @else
+                                {{ $letras[$nota_promedio_final] }}
+                            @endif
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
     @endif
 
     @if ($tipo === 'incorporacion')
@@ -866,20 +933,25 @@
                     </tr>
                 </thead>
             </table>
-            <div style="margin-top: 0.4rem; text-align: center;">
+            <div style="margin-top: 0.5rem; text-align: right;">
+                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
+                    Fecha de emisión: {{ date('d/m/Y') }}
+                </span>
+            </div>
+            <div style="margin-top: 0.5rem; text-align: center;">
                 <span style="text-align: center; font-weight: 700; font-size: 0.9rem">
                     REGISTRO FINAL DE EVALUACIÓN ACADÉMICA
                 </span>
             </div>
             <div style="margin-top: 0.2rem; text-align: center;">
                 <span style="text-align: center; font-weight: 700; font-size: 0.9rem">
-                    {{ $admision_año }} - {{ $ciclo }}
+                    {{ $anio_cabecera }} - {{ $proceso_cabecera }}
                 </span>
             </div>
-            <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0rem;">
+            <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0.5rem;">
                 <tbody>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 {{ $programa }}:
                             </div>
@@ -891,7 +963,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Mención:
                             </div>
@@ -903,7 +975,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Curso:
                             </div>
@@ -915,7 +987,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Cod. Curso:
                             </div>
@@ -927,7 +999,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Docente:
                             </div>
@@ -939,7 +1011,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Cod. Docente:
                             </div>
@@ -951,7 +1023,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Créditos:
                             </div>
@@ -963,7 +1035,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Ciclo:
                             </div>
@@ -975,7 +1047,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Grupo:
                             </div>
@@ -987,7 +1059,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 85px;">
+                        <td style="width: 100px;">
                             <div style="font-weight: 700; font-size: 0.7rem;">
                                 Tipo de Acta:
                             </div>
@@ -1002,99 +1074,116 @@
             </table>
         </header>
         <footer>
-            <div style="margin-top: 1.5rem; text-align: right;">
-                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
-                    Fecha de emisión: {{ date('d/m/Y') }}
+            <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0rem;">
+                <tbody>
+                    <tr>
+                        <td style="width: 33%; text-align: left; font-weight: 400; font-size: 0.65rem ">
+                            Fecha de inicio del curso: ____/____/20___
+                        </td>
+                        <td style="width: 34%; text-align: center; font-weight: 400; font-size: 0.65rem">
+                            Fecha de fin del curso: ____/____/20___
+                        </td>
+                        <td style="width: 33%; text-align: right; font-weight: 400; font-size: 0.65rem">
+                            Fecha de entrega de acta: ____/____/20___
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 3rem; text-align: right;">
+                <span style="font-weight: 400; font-size: 0.7rem">
+                    ___________________________________
                 </span>
             </div>
-            <div style="margin-top: 2.5rem; text-align: right;">
-                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
+            <div style="margin-top: 0rem; text-align: right;">
+                <span style="font-weight: 400; font-size: 0.7rem">
                     {{ $docente }}
                 </span>
             </div>
             <div style="margin-top: 0rem; text-align: right;">
-                <span style="text-align: center; font-weight: 400; font-size: 0.7rem">
+                <span style="font-weight: 400; font-size: 0.7rem">
                     Responsable del curso
                 </span>
             </div>
         </footer>
-        <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0rem; border-collapse: collapse;">
-            <thead>
-                <tr style="border: 1px solid black; padding: 8px; font-size: 0.6rem">
-                    <th rowspan="2" style="border: 1px solid black; padding: 8px;">
-                        Nro
-                    </th>
-                    <th rowspan="2" style="border: 1px solid black; padding: 8px;">
-                        Código
-                    </th>
-                    <th rowspan="2" style="border: 1px solid black; padding: 8px; width: 190px;">
-                        Alumno
-                    </th>
-                    <th colspan="3" style="border: 1px solid black; padding: 8px;">
-                        Promedios
-                    </th>
-                    <th colspan="2" style="border: 1px solid black; padding: 8px;">
-                        Promedio Final
-                    </th>
-                </tr>
-                <tr style="border: 1px solid black; padding: 8px; font-size: 0.6rem">
-                    <th style="border: 1px solid black; padding: 8px;">
-                        Evaluación<br>Permanente
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px;">
-                        Evaluación<br>Medio Curso
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px;">
-                        Evaluación<br>Final
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px;">
-                        Número
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px;">
-                        Letras
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @php
-                    $letras = array('Cero', 'Uno', 'Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis', 'Siete', 'Ocho', 'Nueve', 'Diez', 'Once', 'Doce', 'Trece', 'Catorce', 'Quince', 'Dieciséis', 'Diecisiete', 'Dieciocho', 'Diecinueve', 'Veinte');
-                @endphp
-                <tr style="border: 1px solid black; padding: 4px; font-size: 0.5rem">
-                    <td style="border: 1px solid black; padding: 4px;" align="center">
-                        1
-                    </td>
-                    <td style="border: 1px solid black; padding: 4px;" align="center">
-                        {{ $incorporacion->admitido_codigo }}
-                    </td>
-                    <td style="border: 1px solid black; padding: 4px;">
-                        {{ $incorporacion->nombre_completo }}
-                    </td>
-                    <td style="border: 1px solid black; padding: 4px;" align="center">
-                        {{ $incorporacion->nota_evaluacion_permanente ? round($incorporacion->nota_evaluacion_permanente) : '-' }}
-                    </td>
-                    <td style="border: 1px solid black; padding: 4px;" align="center">
-                        {{ $incorporacion->nota_evaluacion_medio_curso ? round($incorporacion->nota_evaluacion_medio_curso) : '-' }}
-                    </td>
-                    <td style="border: 1px solid black; padding: 4px;" align="center">
-                        {{ $incorporacion->nota_evaluacion_final ? round($incorporacion->nota_evaluacion_final) : '-' }}
-                    </td>
-                    <td style="border: 1px solid black; padding: 4px; {{ $incorporacion->nota_promedio_final < 14 ? 'color: #ff0000;' : '' }}" align="center">
-                        @if ($incorporacion->estado == 3)
-                            NSP
-                        @else
-                            {{ round($incorporacion->nota_promedio_final) }}
-                        @endif
-                    </td>
-                    <td style="border: 1px solid black; padding: 4px; {{ $incorporacion->nota_promedio_final < 14 ? 'color: #ff0000;' : '' }}">
-                        @if ($item->estado == 3)
-                            NSP
-                        @else
-                            {{ $letras[$incorporacion->nota_promedio_final] }}
-                        @endif
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <main>
+            <table class="table" style="width:100%; padding-right: 0rem; padding-left: 0rem; padding-bottom: 0rem; padding-top: 0rem; border-collapse: collapse;">
+                <thead>
+                    <tr style="border: 1px solid black; padding: 8px; font-size: 0.6rem">
+                        <th rowspan="2" style="border: 1px solid black; padding: 8px;">
+                            Nro
+                        </th>
+                        <th rowspan="2" style="border: 1px solid black; padding: 8px;">
+                            Código
+                        </th>
+                        <th rowspan="2" style="border: 1px solid black; padding: 8px; width: 190px;">
+                            Alumno
+                        </th>
+                        <th colspan="3" style="border: 1px solid black; padding: 8px;">
+                            Promedios
+                        </th>
+                        <th colspan="2" style="border: 1px solid black; padding: 8px;">
+                            Promedio Final
+                        </th>
+                    </tr>
+                    <tr style="border: 1px solid black; padding: 8px; font-size: 0.6rem">
+                        <th style="border: 1px solid black; padding: 8px;">
+                            Evaluación<br>Permanente
+                        </th>
+                        <th style="border: 1px solid black; padding: 8px;">
+                            Evaluación<br>Medio Curso
+                        </th>
+                        <th style="border: 1px solid black; padding: 8px;">
+                            Evaluación<br>Final
+                        </th>
+                        <th style="border: 1px solid black; padding: 8px;">
+                            Número
+                        </th>
+                        <th style="border: 1px solid black; padding: 8px;">
+                            Letras
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                        $letras = array('Cero', 'Uno', 'Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis', 'Siete', 'Ocho', 'Nueve', 'Diez', 'Once', 'Doce', 'Trece', 'Catorce', 'Quince', 'Dieciséis', 'Diecisiete', 'Dieciocho', 'Diecinueve', 'Veinte');
+                    @endphp
+                    <tr style="border: 1px solid black; padding: 4px; font-size: 0.5rem">
+                        <td style="border: 1px solid black; padding: 4px;" align="center">
+                            1
+                        </td>
+                        <td style="border: 1px solid black; padding: 4px;" align="center">
+                            {{ $incorporacion->admitido_codigo }}
+                        </td>
+                        <td style="border: 1px solid black; padding: 4px;">
+                            {{ $incorporacion->nombre_completo }}
+                        </td>
+                        <td style="border: 1px solid black; padding: 4px;" align="center">
+                            {{ $incorporacion->nota_evaluacion_permanente ? round($incorporacion->nota_evaluacion_permanente) : '-' }}
+                        </td>
+                        <td style="border: 1px solid black; padding: 4px;" align="center">
+                            {{ $incorporacion->nota_evaluacion_medio_curso ? round($incorporacion->nota_evaluacion_medio_curso) : '-' }}
+                        </td>
+                        <td style="border: 1px solid black; padding: 4px;" align="center">
+                            {{ $incorporacion->nota_evaluacion_final ? round($incorporacion->nota_evaluacion_final) : '-' }}
+                        </td>
+                        <td style="border: 1px solid black; padding: 4px; {{ $incorporacion->nota_promedio_final < 14 ? 'color: #ff0000;' : '' }}" align="center">
+                            @if ($incorporacion->estado == 3)
+                                NSP
+                            @else
+                                {{ round($incorporacion->nota_promedio_final) }}
+                            @endif
+                        </td>
+                        <td style="border: 1px solid black; padding: 4px; {{ $incorporacion->nota_promedio_final < 14 ? 'color: #ff0000;' : '' }}">
+                            @if ($incorporacion->estado == 3)
+                                NSP
+                            @else
+                                {{ $letras[$incorporacion->nota_promedio_final] }}
+                            @endif
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
     @endif
 </body>
 </html>
