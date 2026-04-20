@@ -261,7 +261,12 @@ class Index extends Component
     {
         $inscripcion = Inscripcion::find($id_inscripcion);
         $this->id_inscripcion = $inscripcion->id_inscripcion;
-        $this->expedientes = ExpedienteInscripcion::where('id_inscripcion', $id_inscripcion)->get();
+        $this->expedientes = ExpedienteInscripcion::query()
+            ->where('id_inscripcion', $id_inscripcion)
+            ->whereHas('expediente_admision', function ($query) use ($inscripcion) {
+                $query->where('id_admision', $inscripcion->programa_proceso->id_admision);
+            })
+            ->get();
     }
 
     public function verificar_expediente($id_expediente_inscripcion)
@@ -279,8 +284,14 @@ class Index extends Component
         );
         // cargar expedientes
         $this->cargar_expedientes($expediente->id_inscripcion);
+        $inscripcion = Inscripcion::find($expediente->id_inscripcion);
         // verificar si todos los expedientes estan verificados para verificar la inscripcion
-        $expedientes = ExpedienteInscripcion::where('id_inscripcion', $expediente->id_inscripcion)->get();
+        $expedientes = ExpedienteInscripcion::query()
+            ->where('id_inscripcion', $expediente->id_inscripcion)
+            ->whereHas('expediente_admision', function ($query) use ($inscripcion) {
+                $query->where('id_admision', $inscripcion->programa_proceso->id_admision);
+            })
+            ->get();
         $cantidad = $expedientes->count();
         $verificados = $expedientes->where('expediente_inscripcion_verificacion', 1)->count();
         if ($cantidad == $verificados) {
