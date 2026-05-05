@@ -156,47 +156,62 @@ function verificarProcesoAdmision()
 
 function calcularCantidadDePersonas($tipo, $proceso, $modalidad, $programa)
 {
-    $cantidad = 0;
+    $cantidad = collect();
+
     if ($tipo == 1) {
-        if ($programa) {
-            $cantidad = Inscripcion::join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'inscripcion.id_programa_proceso')
+        if ($proceso && $modalidad && $programa) {
+            $cantidad = Inscripcion::query()
+                ->join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'inscripcion.id_programa_proceso')
                 ->join('programa_plan', 'programa_plan.id_programa_plan', '=', 'programa_proceso.id_programa_plan')
                 ->join('programa', 'programa.id_programa', '=', 'programa_plan.id_programa')
                 ->join('persona', 'persona.id_persona', '=', 'inscripcion.id_persona')
+                ->where('programa_proceso.id_admision', $proceso)
                 ->where('programa.id_modalidad', $modalidad)
                 ->where('programa.id_programa', $programa)
                 ->get();
-        } else if ($modalidad) {
-            $cantidad = Inscripcion::join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'inscripcion.id_programa_proceso')
+        }
+        if ($proceso && $modalidad && !$programa) {
+            $cantidad = Inscripcion::query()
+                ->join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'inscripcion.id_programa_proceso')
                 ->join('programa_plan', 'programa_plan.id_programa_plan', '=', 'programa_proceso.id_programa_plan')
                 ->join('programa', 'programa.id_programa', '=', 'programa_plan.id_programa')
                 ->join('persona', 'persona.id_persona', '=', 'inscripcion.id_persona')
+                ->where('programa_proceso.id_admision', $proceso)
                 ->where('programa.id_modalidad', $modalidad)
                 ->get();
-        } else if ($proceso) {
-            $cantidad = Inscripcion::join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'inscripcion.id_programa_proceso')
+        }
+        if ($proceso && !$modalidad && !$programa) {
+            $cantidad = Inscripcion::query()
+                ->join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'inscripcion.id_programa_proceso')
                 ->join('persona', 'persona.id_persona', '=', 'inscripcion.id_persona')
                 ->where('programa_proceso.id_admision', $proceso)
                 ->get();
         }
     } else {
-        if ($programa) {
-            $cantidad = Admitido::join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'admitido.id_programa_proceso')
+        if ($proceso && $modalidad && $programa) {
+            $cantidad = Admitido::query()
+                ->join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'admitido.id_programa_proceso')
                 ->join('programa_plan', 'programa_plan.id_programa_plan', '=', 'programa_proceso.id_programa_plan')
                 ->join('programa', 'programa.id_programa', '=', 'programa_plan.id_programa')
                 ->join('persona', 'persona.id_persona', '=', 'admitido.id_persona')
+                ->where('programa_proceso.id_admision', $proceso)
                 ->where('programa.id_modalidad', $modalidad)
                 ->where('programa.id_programa', $programa)
                 ->get();
-        } else if ($modalidad) {
-            $cantidad = Admitido::join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'admitido.id_programa_proceso')
+        }
+        if ($proceso && $modalidad && !$programa) {
+            $cantidad = Admitido::query()
+                ->join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'admitido.id_programa_proceso')
                 ->join('programa_plan', 'programa_plan.id_programa_plan', '=', 'programa_proceso.id_programa_plan')
                 ->join('programa', 'programa.id_programa', '=', 'programa_plan.id_programa')
                 ->join('persona', 'persona.id_persona', '=', 'admitido.id_persona')
+                ->where('programa_proceso.id_admision', $proceso)
                 ->where('programa.id_modalidad', $modalidad)
                 ->get();
-        } else if ($proceso) {
-            $cantidad = Admitido::join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'admitido.id_programa_proceso')
+        }
+        if ($proceso && !$modalidad && !$programa) {
+            $cantidad = Admitido::query()
+                ->join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'admitido.id_programa_proceso')
                 ->join('persona', 'persona.id_persona', '=', 'admitido.id_persona')
                 ->where('programa_proceso.id_admision', $proceso)
                 ->get();

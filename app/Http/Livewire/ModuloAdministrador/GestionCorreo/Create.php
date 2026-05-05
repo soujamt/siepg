@@ -275,7 +275,9 @@ class Create extends Component
 
     public function render()
     {
-        $procesos = Admision::orderBy('id_admision', 'desc')->get();
+        $procesos = Admision::query()
+            ->orderBy('admision', 'desc')
+            ->get();
 
         return view('livewire.modulo-administrador.gestion-correo.create', [
             'procesos' => $procesos
