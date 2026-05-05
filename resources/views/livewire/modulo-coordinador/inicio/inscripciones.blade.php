@@ -140,10 +140,13 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $contador = 1;
+                                        @endphp
                                         @forelse ($inscripciones as $item)
                                             <tr class="fs-6">
                                                 <td class="fw-bold">
-                                                    {{ $item->id_inscripcion }}
+                                                    {{ $contador++ }}
                                                 </td>
                                                 <td>
                                                     {{ $item->nombre_completo }}
