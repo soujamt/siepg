@@ -6,15 +6,20 @@ use App\Models\Inscripcion;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class InscripcionesExport implements FromCollection, WithHeadings, WithEvents
+class InscripcionesExport implements FromCollection, WithHeadings, WithEvents, WithMapping
 {
     public $id_programa;
+    public $id_admision;
+    public $contador = 1;
 
-    public function __construct($id_programa)
+    public function __construct($id_programa, $id_admision)
     {
         $this->id_programa = $id_programa;
+        $this->id_admision = $id_admision;
+        $this->contador = 1;
     }
 
     /**
@@ -22,14 +27,32 @@ class InscripcionesExport implements FromCollection, WithHeadings, WithEvents
     */
     public function collection()
     {
-        return Inscripcion::select('inscripcion.id_inscripcion', 'persona.apellido_paterno', 'persona.apellido_materno', 'persona.nombre_completo', 'persona.numero_documento', 'persona.celular', Inscripcion::raw('IF(persona.celular_opcional IS NULL, " ", persona.celular_opcional)'), 'persona.correo', Inscripcion::raw('IF(persona.celular_opcional IS NULL, " ", persona.correo_opcional)'), 'persona.especialidad_carrera')
-                            ->join('persona', 'inscripcion.id_persona', '=', 'persona.id_persona')
-                            ->join('programa_proceso', 'inscripcion.id_programa_proceso', '=', 'programa_proceso.id_programa_proceso')
-                            ->join('programa_plan', 'programa_proceso.id_programa_plan', '=', 'programa_plan.id_programa_plan')
-                            ->join('programa', 'programa_plan.id_programa', '=', 'programa.id_programa')
-                            ->where('programa.id_programa', $this->id_programa)
-                            ->orderBy('persona.nombre_completo', 'asc')
-                            ->get();
+        return Inscripcion::query()
+            ->select('inscripcion.id_inscripcion', 'persona.apellido_paterno', 'persona.apellido_materno', 'persona.nombre', 'persona.nombre_completo', 'persona.numero_documento', 'persona.celular', 'persona.celular_opcional', 'persona.correo', 'persona.correo_opcional', 'persona.especialidad_carrera')
+            ->join('persona', 'inscripcion.id_persona', '=', 'persona.id_persona')
+            ->join('programa_proceso', 'inscripcion.id_programa_proceso', '=', 'programa_proceso.id_programa_proceso')
+            ->join('programa_plan', 'programa_proceso.id_programa_plan', '=', 'programa_plan.id_programa_plan')
+            ->join('programa', 'programa_plan.id_programa', '=', 'programa.id_programa')
+            ->where('programa_proceso.id_admision', $this->id_admision)
+            ->where('programa.id_programa', $this->id_programa)
+            ->orderBy('persona.nombre_completo', 'asc')
+            ->get();
+    }
+
+    public function map($inscripcion): array
+    {
+        return [
+            $this->contador++,
+            $this->limpiarEspaciosDeMasNombres($inscripcion->apellido_paterno),
+            $this->limpiarEspaciosDeMasNombres($inscripcion->apellido_materno),
+            $this->limpiarEspaciosDeMasNombres($inscripcion->nombre),
+            $inscripcion->numero_documento,
+            $inscripcion->celular,
+            $inscripcion->celular_opcional,
+            $inscripcion->correo,
+            $inscripcion->correo_opcional,
+            $inscripcion->especialidad_carrera
+        ];
     }
 
     public function headings(): array
@@ -96,5 +119,12 @@ class InscripcionesExport implements FromCollection, WithHeadings, WithEvents
 
             },
         ];
+    }
+
+    public function limpiarEspaciosDeMasNombres($texto)
+    {
+        $texto = trim($texto); // Eliminar espacios al inicio y al final
+        $texto = preg_replace('/\s+/', ' ', $texto); // Reemplazar múltiples espacios por uno solo
+        return $texto;
     }
 }
