@@ -5,7 +5,7 @@
                 <div id="slider" class="carousel carousel-custom slide" data-bs-ride="carousel" data-bs-interval="5000">
                     <div class="carousel-inner pt-8">
                         <div class="carousel-item active text-center">
-                            <img src="{{ asset('media/banner-2026-02.png') }}" alt="carousel" class="w-100 rounded" />
+                            <img src="{{ asset('media/banner-2026-04.jpeg') }}" alt="carousel" class="w-100 rounded" />
                         </div>
                     </div>
                     <div class="d-flex align-items-center justify-content-center flex-wrap">
