@@ -146,7 +146,7 @@
         </div>
     </div>
     <div style="padding-right: 4rem; padding-left: 4rem; padding-top: 1.5rem; font-size: 0.9rem; text-align: justify; line-height: 1.5;">
-        En Pucallpa a los días ..... días del mes de .................. del 202...., se reunieron en los ambientes de la Escuela de Posgrado de la UNU, EN conformidad con la Resolución N° 007-2025-UNU-CEPG-D, que aprueba el Concurso de {{ $admision }} de la Escuela de Posgrado, y su ampliación mediante la Resolución N° 0261-2025-UNU-EPG-D, la Comisión de Evaluación de Postulantes de la
+        En Pucallpa a los días ..... días del mes de .................. del 2026, se reunieron en los ambientes de la Escuela de Posgrado de la Universidad Nacional de Ucayali, en conformidad con la Resolución N° 004-2026-UNU-CEPG-D, que aprueba el Cronograma del Concurso de Admisión 2026-I de la Escuela de Posgrado, y sus ampliaciones mediante las Resoluciones N.° 110-2026-UNU-CEPG-D y N.° 0355-2026-UNU-CEPG-D, la Comisión de Evaluación de Postulantes de la
         <strong>Maestria
             @if ($mencion == null)
                 en {{ $maestria }}
