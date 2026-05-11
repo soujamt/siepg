@@ -8,6 +8,10 @@
     <title>Reporte de Evaluacion Maestria</title>
     <link rel="shortcut icon" href="{{ public_path('assets/media/logos/logo-pg.png') }}"/>
     <style>
+        @page {
+            margin: 1.2rem 0 1.2rem 0;
+        }
+
         * {
             font-family: Arial, Helvetica, sans-serif;
             margin: 0;
@@ -18,6 +22,58 @@
         body {
             padding: 1rem 0 1rem 0;
             font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .content-block {
+            padding-right: 4rem;
+            padding-left: 4rem;
+            font-size: 0.9rem;
+            text-align: justify;
+        }
+
+        .content-block.top-md {
+            padding-top: 1rem;
+        }
+
+        .content-block.top-lg {
+            padding-top: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .customTable thead {
+            display: table-header-group;
+            background-color: #A8D08D;
+        }
+
+        .customTable tr {
+            page-break-inside: avoid;
+        }
+
+        .closing-section {
+            page-break-inside: avoid;
+            margin-top: 1rem;
+        }
+
+        .signature-block {
+            padding-top: 2rem;
+            font-size: 0.9rem;
+            text-align: justify;
+        }
+
+        .signature-block.compact {
+            padding-top: 1.5rem;
+        }
+
+        .signature-block.spacious {
+            padding-top: 4rem;
+        }
+
+        .signature-table {
+            width: 100%;
+        }
+
+        .signature-table + .signature-table {
+            margin-top: 2rem;
         }
 
         table.customTable {
@@ -37,14 +93,22 @@
             border-style: solid;
             padding: 3px;
         }
-
-        table.customTable thead {
-            background-color: #A8D08D;
-        }
     </style>
 </head>
 
 <body>
+    @php
+        $totalPostulantes = $evaluaciones->count() + $evaluaciones_trasalados_externos->count();
+        $closingSectionClass = 'content-block closing-section';
+        $signatureBlockClass = 'signature-block';
+
+        if ($totalPostulantes <= 10) {
+            $signatureBlockClass .= ' spacious';
+        } elseif ($totalPostulantes >= 24) {
+            $signatureBlockClass .= ' compact';
+        }
+    @endphp
+
     <table class="table" style="width:100%; padding-right: 1rem; padding-left: 1rem; padding-bottom: 1.5rem; padding-top: 1.5rem;">
         <thead>
             <tr>
@@ -82,7 +146,7 @@
         </div>
     </div>
     <div style="padding-right: 4rem; padding-left: 4rem; padding-top: 1.5rem; font-size: 0.9rem; text-align: justify; line-height: 1.5;">
-        En Pucallpa a los días ..... días del mes de .................. del 202...., se reunieron en los ambientes de la Escuela de Posgrado de la UNU, EN conformidad con la Resolución N° 007-2025-UNU-CEPG-D, que aprueba el Concurso de {{ $admision }} de la Escuela de Posgrado, y su ampliación mediante la Resolución N° 0261-2025-UNU-EPG-D, la Comisión de Evaluación de Postulantes de la
+        En Pucallpa a los días ..... días del mes de .................. del 2026, se reunieron en los ambientes de la Escuela de Posgrado de la Universidad Nacional de Ucayali, en conformidad con la Resolución N° 004-2026-UNU-CEPG-D, que aprueba el Cronograma del Concurso de Admisión 2026-I de la Escuela de Posgrado, y sus ampliaciones mediante las Resoluciones N.° 110-2026-UNU-CEPG-D y N.° 0355-2026-UNU-CEPG-D, la Comisión de Evaluación de Postulantes de la
         <strong>Maestria
             @if ($mencion == null)
                 en {{ $maestria }}
@@ -197,11 +261,12 @@
             </table>
         </div>
     @endif
-    <div style="padding-right: 4rem; padding-left: 4rem; padding-top: 1rem; font-size: 0.9rem; text-align: justify; line-height: 1.5;">
-        Terminado el acto de evaluación, a los ..... días del mes de .................. del 202...., se hace llegar los resultados a la Dirección de la Escuela de Posgrado de la UNU y se procede a firmar el acta en señal de conformidad.
-    </div>
-    <div style="padding-right: 4rem; padding-left: 4rem; padding-top: 5rem; font-size: 0.9rem; text-align: justify;">
-        <table style="width: 100%">
+    <div class="{{ $closingSectionClass }}">
+        <div style="line-height: 1.5;">
+            Terminado el acto de evaluación, a los ..... días del mes de .................. del 202...., se hace llegar los resultados a la Dirección de la Escuela de Posgrado de la UNU y se procede a firmar el acta en señal de conformidad.
+        </div>
+        <div class="{{ $signatureBlockClass }}">
+            <table class="signature-table">
             <tbody>
                 <tr>
                     <td align="center"><strong>...........................................</strong></td>
@@ -212,17 +277,18 @@
                     <td align="center"><strong>SECRETARIO</strong></td>
                 </tr>
             </tbody>
-        </table>
-        <table style="width: 100%; margin-top: 3rem">
-            <tbody>
-                <tr>
-                    <td align="center"><strong>...........................................</strong></td>
-                </tr>
-                <tr>
-                    <td align="center"><strong>VOCAL</strong></td>
-                </tr>
-            </tbody>
-        </table>
+            </table>
+            <table class="signature-table">
+                <tbody>
+                    <tr>
+                        <td align="center"><strong>...........................................</strong></td>
+                    </tr>
+                    <tr>
+                        <td align="center"><strong>VOCAL</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 
