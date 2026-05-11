@@ -54,10 +54,6 @@
             margin-top: 1rem;
         }
 
-        .closing-section.new-page {
-            page-break-before: always;
-        }
-
         .signature-block {
             padding-top: 2rem;
             font-size: 0.9rem;
@@ -103,7 +99,7 @@
 <body>
     @php
         $totalPostulantes = $evaluaciones->count() + $evaluaciones_trasalados_externos->count();
-        $closingSectionClass = $totalPostulantes >= 24 ? 'content-block closing-section new-page' : 'content-block closing-section';
+        $closingSectionClass = 'content-block closing-section';
         $signatureBlockClass = 'signature-block';
 
         if ($totalPostulantes <= 10) {
