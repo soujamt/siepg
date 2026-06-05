@@ -28,7 +28,7 @@
                 </p>
                 <p style="text-align: justify; text-justify: inter-word; margin-bottom: 1rem;">
                     Nos complace informarte que hemos recibido tu registro de inscripción para el proceso de
-                    {{ $admision }}. Agradecemos tu interés en nuestro programa y estamos entusiasmados por brindarte
+                    {{ formatearAdmisionVisual($admision) }}. Agradecemos tu interés en nuestro programa y estamos entusiasmados por brindarte
                     una experiencia educativa valiosa. Se le hace recordar que su inscripción esta sujeta a la
                     verificación de los expedientes presentados y el pago de la inscripción. Cualquier observación
                     será comunicada a su correo electrónico.
@@ -37,7 +37,7 @@
                 <p style="text-align: justify; text-justify: inter-word; margin-bottom: 1rem;">
                     Nos complace informarte que hemos actualizado tu registro de inscripción y por ello su ficha de
                     inscripción
-                    para el proceso de {{ $admision }}. Agradecemos tu interés en nuestro programa y estamos
+                    para el proceso de {{ formatearAdmisionVisual($admision) }}. Agradecemos tu interés en nuestro programa y estamos
                     entusiasmados
                     por brindarte una experiencia educativa valiosa. Se le hace recordar que su inscripción esta sujeta a la
                     verificación de los expedientes presentados y el pago de la inscripción. Cualquier observación será
@@ -49,7 +49,7 @@
                 ¡Gracias por inscribirte!
             </p>
             <p style="text-align: justify; text-justify: inter-word; margin-bottom: 1rem;">
-                Nos complace informarte que hemos recibido tu registro de inscripción para el proceso de {{ $admision }}.
+                Nos complace informarte que hemos recibido tu registro de inscripción para el proceso de {{ formatearAdmisionVisual($admision) }}.
                 Agradecemos tu interés en nuestro programa y estamos entusiasmados por brindarte una experiencia educativa
                 valiosa. Se le hace recordar que su inscripción esta sujeta a la verificación de los expedientes presentados
                 y el pago de la inscripción. Cualquier observación será comunicada a su correo electrónico.

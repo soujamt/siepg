@@ -349,7 +349,7 @@
                                 <option></option>
                                 @foreach ($admisionModel as $item)
                                     <option value="{{ $item->id_admision }}">
-                                        {{ $item->admision }}
+                                        {{ formatearAdmisionVisual($item->admision) }}
                                     </option>
                                 @endforeach
                             </select>
@@ -397,7 +397,7 @@
                                                     {{ $id_proceso += 1 }}
                                                 </td>
                                                 <td class="fs-6">
-                                                    {{ $item->admision->admision }}
+                                                    {{ formatearAdmisionVisual($item->admision->admision) }}
                                                 </td>
                                                 <td class="fs-6">
                                                     @if ($item->admision->admision_estado == 1)

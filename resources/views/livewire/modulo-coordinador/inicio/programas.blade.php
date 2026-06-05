@@ -41,8 +41,8 @@
                                 <label class="form-label fw-semibold">Proceso de Admisión:</label>
                                 <div>
                                     <select class="form-select" wire:model="filtro_proceso" id="filtro_proceso"  data-control="select2" data-placeholder="Seleccione">
-                                        $@foreach ($admisiones as $item)
-                                        <option value="{{ $item->id_admision }}">{{ $item->admision }}</option>
+                                        @foreach ($admisiones as $item)
+                                        <option value="{{ $item->id_admision }}">{{ formatearAdmisionVisual($item->admision) }}</option>
                                         @endforeach
                                     </select>
                                 </div>

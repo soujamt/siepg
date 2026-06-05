@@ -43,9 +43,9 @@
                                 <div>
                                     <select class="form-select" wire:model="filtro_proceso" id="filtro_proceso"
                                         data-control="select2" data-placeholder="Seleccione" data-hide-search="true">
-                                        $@foreach ($admisiones as $item)
+                                        @foreach ($admisiones as $item)
                                             <option value="{{ $item->id_programa_proceso }}">
-                                                {{ $item->programa_proceso->admision->admision }}</option>
+                                                {{ formatearAdmisionVisual($item->programa_proceso->admision->admision) }}</option>
                                         @endforeach
                                     </select>
                                 </div>

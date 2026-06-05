@@ -23,6 +23,61 @@ function getAdmision()
     return Admision::where('admision_estado', 1)->first();
 }
 
+function convertirNumeroARomano($numero)
+{
+    $numero = (int) $numero;
+
+    if ($numero <= 0) {
+        return null;
+    }
+
+    $mapa = [
+        1000 => 'M',
+        900 => 'CM',
+        500 => 'D',
+        400 => 'CD',
+        100 => 'C',
+        90 => 'XC',
+        50 => 'L',
+        40 => 'XL',
+        10 => 'X',
+        9 => 'IX',
+        5 => 'V',
+        4 => 'IV',
+        1 => 'I',
+    ];
+
+    $romano = '';
+
+    foreach ($mapa as $valor => $simbolo) {
+        while ($numero >= $valor) {
+            $romano .= $simbolo;
+            $numero -= $valor;
+        }
+    }
+
+    return $romano;
+}
+
+function formatearAdmisionVisual($admision)
+{
+    if (!$admision) {
+        return $admision;
+    }
+
+    if (!preg_match('/^(.*?\b\d{4})\s*-\s*(\d+)\s*$/u', $admision, $coincidencias)) {
+        return $admision;
+    }
+
+    $convocatoriaRomana = convertirNumeroARomano($coincidencias[2]);
+
+    if (!$convocatoriaRomana) {
+        return $admision;
+    }
+
+    return rtrim($coincidencias[1]) . ' - ' . $convocatoriaRomana;
+}
+
 function convertirFechaHora($fechaHora)
 {
     // formato de fecha y hora: 12:00 pm - 12/12/2012

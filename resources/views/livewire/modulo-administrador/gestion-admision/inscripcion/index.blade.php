@@ -105,7 +105,7 @@
                                                     data-placeholder="Seleccione el Proceso">
                                                     <option></option>
                                                     @foreach ($procesos as $item)
-                                                        <option value="{{ $item->id_admision }}">{{ $item->admision }}
+                                                        <option value="{{ $item->id_admision }}">{{ formatearAdmisionVisual($item->admision) }}
                                                         </option>
                                                     @endforeach
                                                 </select>

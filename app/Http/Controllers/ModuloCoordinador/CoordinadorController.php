@@ -144,7 +144,7 @@ class CoordinadorController extends Controller
         $maestria = ucwords(strtolower($programa->subprograma));
 
         $admision = Admision::where('id_admision', $id_admision)->first();
-        $admision = ucwords(strtolower($admision->admision));
+        $admision = ucwords(strtolower(formatearAdmisionVisual($admision->admision)));
 
         $modalidad = Modalidad::where('id_modalidad', $programa->id_modalidad)->first();
         $modalidad = ucwords(strtolower($modalidad->modalidad));
@@ -215,7 +215,7 @@ class CoordinadorController extends Controller
         $doctorado = ucwords(strtolower($programa->subprograma));
 
         $admision = Admision::where('id_admision', $id_admision)->first();
-        $admision = ucwords(strtolower($admision->admision));
+        $admision = ucwords(strtolower(formatearAdmisionVisual($admision->admision)));
 
         $modalidad = Modalidad::where('id_modalidad', $programa->id_modalidad)->first();
         $modalidad = ucwords(strtolower($modalidad->modalidad));

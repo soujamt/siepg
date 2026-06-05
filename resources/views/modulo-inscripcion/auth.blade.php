@@ -12,7 +12,7 @@
                         Escuela de Posgrado
                     </span>
                     <span class="fw-bolder fs-1 text-center">
-                        Proceso de {{ $admision }}
+                        Proceso de {{ formatearAdmisionVisual($admision) }}
                     </span>
                 </div>
             </div>

@@ -146,7 +146,7 @@
         </div>
     </div>
     <div style="padding-right: 4rem; padding-left: 4rem; padding-top: 1.5rem; font-size: 0.9rem; text-align: justify; line-height: 1.5;">
-        En Pucallpa a los días ..... días del mes de .................. del 202...., se reunieron en los ambientes de la Escuela de Posgrado de la UNU, en concordancia con la Resolución Directoral N°0516-2024-UNU-EPG-D que aprueba el Concurso de {{ $admision }} de la Escuela de Posgrado, la Comisión de Evaluación de Postulantes del <strong>Doctorado
+        En Pucallpa a los días ..... días del mes de .................. del 202...., se reunieron en los ambientes de la Escuela de Posgrado de la UNU, en concordancia con la Resolución Directoral N°0516-2024-UNU-EPG-D que aprueba el Concurso de {{ formatearAdmisionVisual($admision) }} de la Escuela de Posgrado, la Comisión de Evaluación de Postulantes del <strong>Doctorado
             @if ($mencion == null)
                 en {{ $doctorado }}
             @endif

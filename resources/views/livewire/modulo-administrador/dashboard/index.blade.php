@@ -43,7 +43,7 @@
                                         <div>
                                             <select class="form-select" wire:model="filtro_proceso" id="filtro_proceso">
                                                 @foreach ($admisiones as $item)
-                                                <option value="{{ $item->id_admision }}">{{ $item->admision }}</option>
+                                                <option value="{{ $item->id_admision }}">{{ formatearAdmisionVisual($item->admision) }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -324,7 +324,7 @@
                         <div class="card shadow-sm">
                             <div class="card-header bg-light-warning">
                                 <h3 class="card-title fw-bold">
-                                    Reporte de Matriculados por Programa del Proceso de {{ ucwords(strtolower($admision->admision)) }}
+                                    Reporte de Matriculados por Programa del Proceso de {{ ucwords(strtolower(formatearAdmisionVisual($admision->admision))) }}
                                 </h3>
                             </div>
                             <div class="card-body p-0 mb-0">
@@ -476,7 +476,7 @@
                                 data-placeholder="Seleccione el proceso">
                                 <option></option>
                                 @foreach ($admisiones as $item)
-                                    <option value="{{ $item->id_admision }}">PROCESO {{ $item->admision }}</option>
+                                    <option value="{{ $item->id_admision }}">PROCESO {{ formatearAdmisionVisual($item->admision) }}</option>
                                 @endforeach
                             </select>
                             @error('proceso')

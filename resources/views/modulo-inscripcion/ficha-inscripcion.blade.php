@@ -562,7 +562,7 @@
                             ESCUELA DE POSGRADO
                         </div>
                         <div style="font-weight: 700; font-size:medium;">
-                            FICHA DE INSCRIPCION: {{$admision}}
+                            FICHA DE INSCRIPCION: {{ formatearAdmisionVisual($admision) }}
                         </div>
                     </div>
                 </th>
