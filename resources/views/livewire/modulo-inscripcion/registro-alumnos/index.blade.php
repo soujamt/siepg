@@ -39,7 +39,7 @@
                                 <select wire:model="admision" class="form-select @error('admision') is-invalid @enderror" id="admision" data-control="select2" data-placeholder="Seleccione su proceso de admision" data-allow-clear="true">
                                     <option></option>
                                     @foreach ($admision_model as $item)
-                                    <option value="{{ $item->id_admision }}">{{ $item->admision }}</option>
+                                    <option value="{{ $item->id_admision }}">{{ formatearAdmisionVisual($item->admision) }}</option>
                                     @endforeach
                                 </select>
                                 <div class="mt-1 text-muted">

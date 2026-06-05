@@ -26,7 +26,7 @@ class InscripcionController extends Controller
     {
         $admision = Admision::where('admision_estado', 1)->first()->admision;
         $admision_year = Admision::where('admision_estado', 1)->first()->admision_año;
-        $admision = ucwords(strtolower($admision));
+        $admision = ucwords(strtolower(formatearAdmisionVisual($admision)));
         return view('modulo-inscripcion.auth', [
             'admision' => $admision,
             'admision_year' => $admision_year

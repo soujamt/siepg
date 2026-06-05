@@ -158,7 +158,7 @@
                                                 </td>
                                                 <td class="">
                                                     <span class="badge badge-light-info fs-6 px-3 py-2 my-1">
-                                                        {{ $item->programa_proceso->admision->admision }}
+                                                        {{ formatearAdmisionVisual($item->programa_proceso->admision->admision) }}
                                                     </span>
                                                     <span class="badge badge-light-secondary fs-6 px-3 py-2 text-gray-700 my-1">
                                                         PLAN {{ $item->programa_proceso->programa_plan->plan->plan }}
@@ -320,7 +320,7 @@
                                 <option></option>
                                 @foreach ($procesos as $item)
                                     <option value="{{ $item->id_admision }}">
-                                        PROCESO DE {{ $item->admision }}
+                                        PROCESO DE {{ formatearAdmisionVisual($item->admision) }}
                                     </option>
                                 @endforeach
                             </select>
@@ -394,7 +394,7 @@
                                         @else
                                             {{ $item->programa }} EN {{ $item->subprograma }}
                                         @endif
-                                        {{ $item->id_modalidad == 1 ? ' - PRESENCIAL' : ' - DISTANCIA' }} - {{ ' PROCESO DE ' . $item->admision }}
+                                        {{ $item->id_modalidad == 1 ? ' - PRESENCIAL' : ' - DISTANCIA' }} - {{ ' PROCESO DE ' . formatearAdmisionVisual($item->admision) }}
                                     </option>
                                 @endforeach
                             </select>

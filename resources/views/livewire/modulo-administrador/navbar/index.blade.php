@@ -11,7 +11,7 @@
                     id="kt_app_header_menu" data-kt-menu="true">
                     <div class="menu-item">
                         <span class="fs-3 fw-bold">
-                            PROCESO DE {{ $admision }}
+                            PROCESO DE {{ formatearAdmisionVisual($admision) }}
                         </span>
                     </div>
                 </div>

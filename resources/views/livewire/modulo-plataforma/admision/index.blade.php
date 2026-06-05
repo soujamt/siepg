@@ -9,7 +9,7 @@
                 <div class="text-center">
                     <h1 class="fw-bold mb-5">
                         ¡Fuiste admitido en el Proceso de
-                        {{ ucwords(strtolower($inscripcion_admision->admision->admision)) }}!
+                        {{ ucwords(strtolower(formatearAdmisionVisual($inscripcion_admision->admision->admision))) }}!
                     </h1>
 
                     <div class="separator separator-dashed border-success opacity-25 mb-5"></div>
@@ -60,7 +60,7 @@
                         <div class="d-flex flex-column">
                             <span class="fw-bold fs-4">
                                 No fuiste admitido en el Proceso de
-                                {{ ucwords(strtolower($inscripcion_admision->admision->admision)) }}
+                                {{ ucwords(strtolower(formatearAdmisionVisual($inscripcion_admision->admision->admision))) }}
                             </span>
                         </div>
                     </div>

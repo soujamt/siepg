@@ -127,7 +127,7 @@
         <tbody>
             <tr>
                 <td align="left">
-                    PROCESO: <span style="font-weight: regular;">{{ calcularPeriodo($matricula->id_matricula) }}</span>
+                    PROCESO: <span style="font-weight: regular;">{{ formatearAdmisionVisual($admision) }}</span>
                 </td>
                 <td align="center">
                     {{-- CICLO: <span style="font-weight: regular;">{{ $ciclo }}</span> --}}

@@ -53,7 +53,7 @@
                                     @forelse ($admision_model as $item)
                                         <tr>
                                             <td align="center" class="fw-bold fs-5">{{ $item->id_admision }}</td>
-                                            <td align="center">{{ $item->admision }}</td>
+                                            <td align="center">{{ formatearAdmisionVisual($item->admision) }}</td>
                                             <td align="center">{{ $item->admision_año }}</td>
                                             <td align="center">
                                                 @if ($item->admision_estado == 1)

@@ -54,7 +54,7 @@
                                                 <select class="form-select" wire:model="proceso_filtro" id="proceso_filtro"  data-control="select2" data-placeholder="Seleccione el Proceso">
                                                     <option></option>
                                                     @foreach ($admisiones as $item)
-                                                        <option value="{{ $item->id_admision }}">{{ $item->admision }}</option>
+                                                        <option value="{{ $item->id_admision }}">{{ formatearAdmisionVisual($item->admision) }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -120,7 +120,7 @@
                                             </td>
                                             <td align="center">
                                                 <span class="badge badge-light-info fs-6 px-3 py-2">
-                                                    {{ $item->admision }}
+                                                    {{ formatearAdmisionVisual($item->admision) }}
                                                 </span>
                                             </td>
                                             <td align="center">
@@ -222,7 +222,7 @@
                                     <option></option>
                                     @foreach ($admisiones as $item)
                                         <option value="{{ $item->id_admision }}">
-                                            {{ $item->admision }}
+                                            {{ formatearAdmisionVisual($item->admision) }}
                                         </option>
                                     @endforeach
                                 </select>

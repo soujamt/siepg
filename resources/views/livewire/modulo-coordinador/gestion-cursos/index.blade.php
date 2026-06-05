@@ -358,7 +358,7 @@
                                 <option></option>
                                 @foreach ($procesos as $item)
                                     <option value="{{ $item->id_admision }}">
-                                        {{ $item->admision }}
+                                        {{ formatearAdmisionVisual($item->admision) }}
                                     </option>
                                 @endforeach
                             </select>
@@ -450,7 +450,7 @@
                                                 </td>
                                                 <td class="fs-6">
                                                     <span class="badge badge-light-secondary text-gray-700 fs-6 px-3 py-2">
-                                                        {{ $item->admision->admision }}
+                                                        {{ formatearAdmisionVisual($item->admision->admision) }}
                                                     </span>
                                                 </td>
                                                 <td class="fs-6">
@@ -659,7 +659,7 @@
                                                         </td>
                                                         <td class="fs-6">
                                                             <span class="badge badge-light-secondary text-gray-700 fs-6 px-3 py-2">
-                                                                {{ $item->admision->admision }}
+                                                                {{ formatearAdmisionVisual($item->admision->admision) }}
                                                             </span>
                                                         </td>
                                                         <td class="fs-6">

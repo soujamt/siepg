@@ -67,7 +67,7 @@
                                     @forelse ($expedienteAdmisionModel as $item)
                                     <tr>
                                         <td align="center" class="fw-bold fs-5">{{ $item->id_expediente_admision }}</td>
-                                        <td align="center">{{ $item->admision }}</td>
+                                        <td align="center">{{ formatearAdmisionVisual($item->admision) }}</td>
                                         <td align="center">
                                             @if ($item->expediente_admision_estado == 1)
                                                 <span style="cursor: pointer;" wire:click="cargarAlertaEstado({{ $item->id_expediente_admision }})" class="badge text-bg-success text-light hover-elevate-down fs-6 px-3 py-2">Activo</span>
@@ -161,7 +161,7 @@
                                         @php
                                             $isAssigned = $validarSelect->where('id_expediente', $id_expediente)->contains('id_admision', $item->id_admision);
                                         @endphp
-                                        <option value="{{$item->id_admision}}" {{$isAssigned ? 'disabled' : ''}} class="{{$isAssigned ? 'text-gray-400' : ''}}">{{$item->admision}}</option>
+                                        <option value="{{$item->id_admision}}" {{$isAssigned ? 'disabled' : ''}} class="{{$isAssigned ? 'text-gray-400' : ''}}">{{ formatearAdmisionVisual($item->admision) }}</option>
                                     @endforeach
                                 </select>
                                 @error('id_admision')
