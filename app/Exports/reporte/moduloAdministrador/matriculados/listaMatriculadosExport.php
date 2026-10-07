@@ -55,7 +55,6 @@ class listaMatriculadosExport implements FromCollection, WithMapping, ShouldAuto
             ->join('programa','programa_plan.id_programa','=','programa.id_programa')
             ->join('persona','admitido.id_persona','=','persona.id_persona')
             ->where('programa.programa_estado',1)
-            ->where('programa.id_modalidad',2)
             ->where('admitido.id_programa_proceso',$this->programa->id_programa_proceso)
             ->where('matricula.id_programa_proceso_grupo',$this->id_programa_proceso_grupo)
             ->where('matricula.matricula_estado',1)

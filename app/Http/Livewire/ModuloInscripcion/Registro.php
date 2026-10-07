@@ -66,9 +66,25 @@ class Registro extends Component
         }
 
         $this->paso = 1;
-        $this->modalidad_array = Modalidad::where('modalidad_estado', 1)->get();
-        $this->programa_array = Collect();
         $this->admision = Admision::where('admision_estado', 1)->first();
+        // solo las modalidades que tienen programas ofertados en el proceso de admision activo
+        $this->modalidad_array = Modalidad::where('modalidad_estado', 1)
+            ->whereIn('id_modalidad', function ($query) {
+                $query->select('programa.id_modalidad')
+                    ->from('programa_proceso')
+                    ->join('programa_plan', 'programa_plan.id_programa_plan', '=', 'programa_proceso.id_programa_plan')
+                    ->join('programa', 'programa.id_programa', '=', 'programa_plan.id_programa')
+                    ->where('programa_proceso.id_admision', $this->admision->id_admision)
+                    ->where('programa_proceso.programa_proceso_estado', 1)
+                    ->where('programa_plan.programa_plan_estado', 1);
+            })
+            ->get();
+        $this->programa_array = Collect();
+        // si el proceso oferta una sola modalidad, se selecciona automaticamente
+        if ($this->modalidad_array->count() == 1) {
+            $this->modalidad = $this->modalidad_array->first()->id_modalidad;
+            $this->updatedModalidad($this->modalidad);
+        }
         $this->ubigeo_direccion_array = Ubigeo::all();
         $this->ubigeo_nacimiento_array = Ubigeo::all();
     }

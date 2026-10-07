@@ -21,7 +21,7 @@ class listaProgramasExport implements WithMultipleSheets
             ->join('programa_plan', 'programa_proceso.id_programa_plan', '=', 'programa_plan.id_programa_plan')
             ->join('programa', 'programa_plan.id_programa', '=', 'programa.id_programa')
             ->where('programa.programa_estado', 1)
-            ->where('programa.id_modalidad', 2)
+            ->where('programa_proceso.id_admision', getAdmision()->id_admision)
             ->where('inscripcion.inscripcion_estado', 1)
             ->where('inscripcion.retiro_inscripcion', 0)
             ->where('inscripcion.verificar_expedientes', 1)
