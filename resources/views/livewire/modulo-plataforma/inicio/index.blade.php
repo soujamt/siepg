@@ -141,7 +141,7 @@
                         data-bs-interval="5000">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="{{ asset('media/banner-2026-02.png') }}" alt="carousel"
+                                <img src="{{ asset('media/banner-2026-05.jpeg') }}" alt="carousel"
                                     class="w-100 rounded" />
                             </div>
                         </div>
