@@ -6,12 +6,12 @@
                     @if ($programa->mencion)
                         Mencion en {{ ucwords(strtolower($programa->mencion)) }} en Modalidad
                         {{ ucwords(strtolower($programa->modalidad->modalidad)) }} del Proceso de
-                        {{ ucwords(strtolower(formatearAdmisionVisual($admision->admision))) }}
+                        {{ formatearAdmisionTitulo($admision->admision) }}
                     @else
                         {{ ucwords(strtolower($programa->programa)) }} en
                         {{ ucwords(strtolower($programa->subprograma)) }} en Modalidad
                         {{ ucwords(strtolower($programa->modalidad->modalidad)) }} del Proceso de
-                        {{ ucwords(strtolower(formatearAdmisionVisual($admision->admision))) }}
+                        {{ formatearAdmisionTitulo($admision->admision) }}
                     @endif
                 </h1>
                 <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">

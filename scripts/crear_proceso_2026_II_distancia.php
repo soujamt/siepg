@@ -64,7 +64,7 @@ $admisionReferenciaNombre = 'ADMISION 2026 - 1'; // de aqui se copian los expedi
 
 // Cronograma de admision proceso 2026 - II modalidad a distancia
 $fechas = [
-    'admision_fecha_inicio_inscripcion' => '2026-11-07',
+    'admision_fecha_inicio_inscripcion' => '2026-10-07',
     'admision_fecha_fin_inscripcion' => '2026-11-09',
     'admision_fecha_inicio_expediente' => '2026-11-10',
     'admision_fecha_fin_expediente' => '2026-11-11',
@@ -99,7 +99,7 @@ $linksWhatsapp = [
     'MPI' => 'https://chat.whatsapp.com/DqhinHz74qV5JhYJa0sk5g', // Gestion Empresarial - Proyectos de Inversion
     'MTF' => 'https://chat.whatsapp.com/HlfnG2TBc64JxqTEFDGaAx', // Gestion Empresarial - Gestion Tributaria y Fiscal
     'MAG' => 'https://chat.whatsapp.com/GkpRi6HPn4l5a2X7fTfYYB', // Gestion Empresarial - Auditoria de la Gestion Empresarial
-    // MCP (Ciencias de la Computacion): pendiente, no figura en el documento
+    // MCP (Ciencias de la Computacion): no tendra grupo de WhatsApp
     // Doctorados
     'DSP' => 'https://chat.whatsapp.com/ImZimooo0fcA65g7lv1KN3', // Salud Publica
     'DED' => 'https://chat.whatsapp.com/DEcVcbDRrdXIFL3aao5OTE', // Educacion

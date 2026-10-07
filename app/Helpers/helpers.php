@@ -78,6 +78,22 @@ function formatearAdmisionVisual($admision)
     return rtrim($coincidencias[1]) . ' - ' . $convocatoriaRomana;
 }
 
+// "ADMISION 2026 - 2" -> "Admision 2026 - II": capitaliza el texto sin alterar la convocatoria en romano
+function formatearAdmisionTitulo($admision)
+{
+    $admision = formatearAdmisionVisual($admision);
+
+    if (!$admision) {
+        return $admision;
+    }
+
+    if (!preg_match('/^(.*?\b\d{4})\s*-\s*([IVXLCDM]+)\s*$/u', $admision, $coincidencias)) {
+        return ucwords(strtolower($admision));
+    }
+
+    return ucwords(strtolower(rtrim($coincidencias[1]))) . ' - ' . $coincidencias[2];
+}
+
 function convertirFechaHora($fechaHora)
 {
     // formato de fecha y hora: 12:00 pm - 12/12/2012
