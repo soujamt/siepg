@@ -157,7 +157,7 @@
                             <div class="card shadow-sm">
                                 <div class="card-header bg-light-success">
                                     <h3 class="card-title fw-bold">
-                                        Reporte de Inscritos por Programa de Maestría del Proceso de {{ ucwords(strtolower(formatearAdmisionVisual($admision->admision))) }}
+                                        Reporte de Inscritos por Programa de Maestría del Proceso de {{ formatearAdmisionTitulo($admision->admision) }}
                                     </h3>
                                 </div>
                                 <div class="card-body mb-0">
@@ -217,7 +217,7 @@
                             <div class="card shadow-sm">
                                 <div class="card-header bg-light-primary">
                                     <h3 class="card-title fw-bold">
-                                        Reporte de Inscritos por Programa de Doctorado del Proceso de {{ ucwords(strtolower(formatearAdmisionVisual($admision->admision))) }}
+                                        Reporte de Inscritos por Programa de Doctorado del Proceso de {{ formatearAdmisionTitulo($admision->admision) }}
                                     </h3>
                                 </div>
                                 <div class="card-body mb-0">
