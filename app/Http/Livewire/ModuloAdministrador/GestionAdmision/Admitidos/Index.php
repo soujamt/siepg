@@ -118,14 +118,12 @@ class Index extends Component
                 ->orderBy('programa.id_programa')
                 ->orderBy('persona.nombre_completo')
                 ->get();
-        $admision_año = Admision::where('admision_estado', 1)->first()->admision_año; // obtengo el año de la admision activa
+        $admision_año = $admision->admision_año; // obtengo el año de la admision activa
         $admision_año = substr($admision_año, 2, 2); // obtengo los ultimos 2 digitos del año de la admision activa
         $codigo_doctorado = '0D0'; // codigo de doctorado inicial
         $codigo_maestria = '0M0'; // codigo de maestria inicial
 
         foreach($evaluacion as $item){ // recorremos los admitidos
-            $maximo_codigo_admitidos = Admitido::orderBy('admitido_codigo', 'desc')->first(); // codigo maximo de admitidos
-
             // generamos codigo de doctorado
             if ($item->programa_tipo == 2) {
                 // 1) Determinamos la letra según la modalidad

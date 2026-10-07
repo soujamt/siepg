@@ -122,11 +122,14 @@ Route::get('/gestion-retiro', [CoordinadorController::class, 'retiro'])
 
 // ruta para generar numeros consecutivos por programa academico de las inscripciones verificadas
 Route::get('/generar-numero-consecutivo', function () {
+    // solo se numeran las inscripciones del proceso de admision activo
+    $id_admision = getAdmision()->id_admision;
+
     $programas = Inscripcion::join('programa_proceso', 'inscripcion.id_programa_proceso', '=', 'programa_proceso.id_programa_proceso')
             ->join('programa_plan', 'programa_proceso.id_programa_plan', '=', 'programa_plan.id_programa_plan')
             ->join('programa', 'programa_plan.id_programa', '=', 'programa.id_programa')
             ->where('programa.programa_estado', 1)
-            ->where('programa.id_modalidad', 2)
+            ->where('programa_proceso.id_admision', $id_admision)
             ->where('inscripcion.inscripcion_estado', 1)
             ->where('inscripcion.retiro_inscripcion', 0)
             ->where('inscripcion.verificar_expedientes', 1)
@@ -140,7 +143,7 @@ Route::get('/generar-numero-consecutivo', function () {
             ->join('programa','programa_plan.id_programa','=','programa.id_programa')
             ->join('persona','inscripcion.id_persona','=','persona.id_persona')
             ->where('programa.programa_estado',1)
-            ->where('programa.id_modalidad',2)
+            ->where('programa_proceso.id_admision', $id_admision)
             ->where('inscripcion.inscripcion_estado',1)
             ->where('inscripcion.retiro_inscripcion',0)
             ->where('inscripcion.verificar_expedientes',1)

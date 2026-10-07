@@ -379,8 +379,9 @@ class Index extends Component
         $procesos = Admision::orderBy('admision', 'desc')->get();
         $programas = Programa::query()
             ->where('id_facultad', $this->coordinador->id_facultad)
-            ->where('id_modalidad', 2)
             ->where('programa_estado', 1)
+            ->orderBy('id_modalidad')
+            ->orderBy('id_programa')
             ->get();
         $programa_tipo_filtro = $this->filtro_programa ? Programa::find($this->filtro_programa)->programa_tipo : null;
         $ciclos = Ciclo::where('ciclo_estado', 1)

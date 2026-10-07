@@ -49,7 +49,6 @@ class listaEvaluacionesExport implements FromCollection, WithMapping, ShouldAuto
             ->join('programa','programa_plan.id_programa','=','programa.id_programa')
             ->join('persona','inscripcion.id_persona','=','persona.id_persona')
             ->where('programa.programa_estado',1)
-            ->where('programa.id_modalidad',2)
             ->where('inscripcion.inscripcion_estado',1)
             ->where('inscripcion.retiro_inscripcion',0)
             ->where('inscripcion.verificar_expedientes',1)
