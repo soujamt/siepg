@@ -689,24 +689,7 @@ class Registro extends Component
         $pago->save();
 
         //  obtener el ultimo codigo de inscripcion y creamos el nuevo codigo de acuerdo al año y convocatoria del proceso de admision
-        $admision_año = Admision::where('admision_estado', 1)->first()->admision_año;
-        $admision_año = substr($admision_año, -2);
-        $admision_convocatoria = Admision::where('admision_estado', 1)->first()->admision_convocatoria;
-
-        $ultimo_codifo_inscripcion = Inscripcion::orderBy('inscripcion_codigo', 'DESC')->first();
-        if ($ultimo_codifo_inscripcion == null) {
-            $codigo_inscripcion = 'IN' . $admision_año . $admision_convocatoria . '00001';
-        } else {
-            $codigo_inscripcion = $ultimo_codifo_inscripcion->inscripcion_codigo;
-            if (substr($codigo_inscripcion, 2, 2) != $admision_año || substr($codigo_inscripcion, 4, 1) != $admision_convocatoria) {
-                $codigo_inscripcion = 'IN' . $admision_año . $admision_convocatoria . '00001';
-            } else {
-                $codigo_inscripcion = substr($codigo_inscripcion, 5, 5);
-                $codigo_inscripcion = intval($codigo_inscripcion) + 1;
-                $codigo_inscripcion = str_pad($codigo_inscripcion, 5, "0", STR_PAD_LEFT);
-                $codigo_inscripcion = 'IN' . $admision_año . $admision_convocatoria . $codigo_inscripcion;
-            }
-        }
+        $codigo_inscripcion = generarCodigoInscripcion(Admision::where('admision_estado', 1)->first());
 
         // registrar datos de inscripcion
         $inscripcion = new Inscripcion();

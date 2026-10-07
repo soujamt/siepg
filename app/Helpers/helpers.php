@@ -16,6 +16,7 @@ use App\Models\Matricula\MatriculaCurso as ModelMatriculaCurso;
 use App\Models\Reincorporacion;
 use App\Models\Reingreso;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 function getAdmision()
@@ -398,6 +399,190 @@ function generarFichaInscripcion($id_inscripcion)
 
     // Asignar todos los permisos al archivo
     chmod($nombre_db, 0777);
+}
+
+// Genera el siguiente codigo de inscripcion del proceso de admision: IN + año (2 digitos) + convocatoria + correlativo
+function generarCodigoInscripcion($admision)
+{
+    $admision_año = substr($admision->admision_año, -2);
+    $admision_convocatoria = $admision->admision_convocatoria;
+
+    $ultimo_codigo_inscripcion = Inscripcion::orderBy('inscripcion_codigo', 'DESC')->first();
+    if ($ultimo_codigo_inscripcion == null) {
+        return 'IN' . $admision_año . $admision_convocatoria . '00001';
+    }
+
+    $codigo_inscripcion = $ultimo_codigo_inscripcion->inscripcion_codigo;
+    if (substr($codigo_inscripcion, 2, 2) != $admision_año || substr($codigo_inscripcion, 4, 1) != $admision_convocatoria) {
+        return 'IN' . $admision_año . $admision_convocatoria . '00001';
+    }
+
+    $correlativo = intval(substr($codigo_inscripcion, 5, 5)) + 1;
+    return 'IN' . $admision_año . $admision_convocatoria . str_pad($correlativo, 5, "0", STR_PAD_LEFT);
+}
+
+// Programa proceso del proceso de admision activo al que se puede trasladar una inscripcion
+function getProgramaProcesoTraslado($id_programa_proceso)
+{
+    return ProgramaProceso::join('programa_plan', 'programa_plan.id_programa_plan', '=', 'programa_proceso.id_programa_plan')
+        ->join('programa', 'programa.id_programa', '=', 'programa_plan.id_programa')
+        ->where('programa_proceso.id_programa_proceso', $id_programa_proceso)
+        ->where('programa_proceso.id_admision', getAdmision()->id_admision)
+        ->where('programa_proceso.programa_proceso_estado', 1)
+        ->where('programa_plan.programa_plan_estado', 1)
+        ->select('programa_proceso.*', 'programa.programa_tipo')
+        ->first();
+}
+
+// Valida si una inscripcion de un proceso anterior se puede trasladar al proceso activo.
+// Retorna el motivo por el que no se puede trasladar o null si se puede.
+function validarTrasladoInscripcion(Inscripcion $inscripcion, $id_programa_proceso_destino = null)
+{
+    $admision = getAdmision();
+    if (!$admision) {
+        return 'No hay un proceso de admisión activo.';
+    }
+    if ($inscripcion->programa_proceso->id_admision == $admision->id_admision) {
+        return 'La inscripción ya pertenece al proceso de admisión activo.';
+    }
+    if (Inscripcion::where('id_inscripcion_origen', $inscripcion->id_inscripcion)->exists()) {
+        return 'La inscripción ya fue trasladada.';
+    }
+    if ($inscripcion->retiro_inscripcion == 1) {
+        return 'La inscripción se encuentra reservada.';
+    }
+    if ($inscripcion->inscripcion_estado == 2) {
+        return 'La inscripción se encuentra observada.';
+    }
+    // solo se trasladan las inscripciones de programas que no se aperturaron (sin admitidos)
+    if (Admitido::where('id_programa_proceso', $inscripcion->id_programa_proceso)->exists()) {
+        return 'El programa de la inscripción tuvo admitidos. Solo se trasladan inscripciones de programas que no se aperturaron.';
+    }
+    $inscripcion_proceso_activo = Inscripcion::join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'inscripcion.id_programa_proceso')
+        ->where('inscripcion.id_persona', $inscripcion->id_persona)
+        ->where('programa_proceso.id_admision', $admision->id_admision)
+        ->first();
+    if ($inscripcion_proceso_activo) {
+        return 'El postulante ya tiene la inscripción ' . $inscripcion_proceso_activo->inscripcion_codigo . ' en el proceso de admisión activo.';
+    }
+    if ($id_programa_proceso_destino && !getProgramaProcesoTraslado($id_programa_proceso_destino)) {
+        return 'El programa seleccionado no está disponible en el proceso de admisión activo.';
+    }
+
+    return null;
+}
+
+// Traslada una inscripcion de un programa no aperturado al proceso de admision activo.
+// Crea una nueva inscripcion en el programa destino con el mismo pago y los expedientes ya presentados
+// (conservando su verificacion) y deja reservada la inscripcion original.
+// Se debe validar antes con validarTrasladoInscripcion().
+function trasladarInscripcion(Inscripcion $inscripcion, $id_programa_proceso_destino)
+{
+    $admision = getAdmision();
+    $programa_proceso = getProgramaProcesoTraslado($id_programa_proceso_destino);
+
+    $nueva_inscripcion = DB::transaction(function () use ($inscripcion, $admision, $programa_proceso) {
+        // bloqueamos la inscripcion original para evitar un traslado duplicado
+        $inscripcion = Inscripcion::where('id_inscripcion', $inscripcion->id_inscripcion)->lockForUpdate()->first();
+        if ($inscripcion->retiro_inscripcion == 1) {
+            throw new RuntimeException('La inscripción ya fue trasladada o reservada.');
+        }
+
+        $nueva_inscripcion = new Inscripcion();
+        $nueva_inscripcion->inscripcion_codigo = generarCodigoInscripcion($admision);
+        $nueva_inscripcion->inscripcion_fecha = now();
+        $nueva_inscripcion->id_persona = $inscripcion->id_persona;
+        $nueva_inscripcion->inscripcion_estado = 0; // 0: pendiente, 1: inscrito
+        $nueva_inscripcion->es_convenio = $inscripcion->es_convenio;
+        $nueva_inscripcion->id_pago = $inscripcion->id_pago;
+        $nueva_inscripcion->id_programa_proceso = $programa_proceso->id_programa_proceso;
+        $nueva_inscripcion->id_inscripcion_origen = $inscripcion->id_inscripcion;
+        $nueva_inscripcion->inscripcion_tipo_programa = $programa_proceso->programa_tipo;
+        $nueva_inscripcion->es_traslado_externo = $inscripcion->es_traslado_externo;
+        $nueva_inscripcion->save();
+
+        // expedientes que pide el proceso activo para el tipo de programa destino
+        $expedientes_requeridos = ExpedienteAdmision::join('expediente', 'expediente.id_expediente', '=', 'expediente_admision.id_expediente')
+            ->where('expediente_admision.id_admision', $admision->id_admision)
+            ->where('expediente_admision.expediente_admision_estado', 1)
+            ->where('expediente.expediente_estado', 1)
+            ->where(function ($query) use ($programa_proceso) {
+                $query->where('expediente.expediente_tipo', 0)
+                    ->orWhere('expediente.expediente_tipo', $programa_proceso->programa_tipo);
+            })
+            ->select('expediente_admision.id_expediente_admision', 'expediente_admision.id_expediente')
+            ->get();
+
+        // expedientes presentados en la inscripcion original (el mas reciente por tipo de expediente)
+        $expedientes_presentados = ExpedienteInscripcion::join('expediente_admision', 'expediente_admision.id_expediente_admision', '=', 'expediente_inscripcion.id_expediente_admision')
+            ->where('expediente_inscripcion.id_inscripcion', $inscripcion->id_inscripcion)
+            ->select('expediente_inscripcion.*', 'expediente_admision.id_expediente')
+            ->orderBy('expediente_inscripcion.id_expediente_inscripcion')
+            ->get()
+            ->keyBy('id_expediente');
+
+        $verificados = 0;
+        $observados = 0;
+        foreach ($expedientes_requeridos as $requerido) {
+            $presentado = $expedientes_presentados->get($requerido->id_expediente);
+            if (!$presentado) {
+                continue;
+            }
+
+            // se reutiliza el mismo archivo del expediente presentado
+            $expediente_inscripcion = new ExpedienteInscripcion();
+            $expediente_inscripcion->expediente_inscripcion_url = $presentado->expediente_inscripcion_url;
+            $expediente_inscripcion->expediente_inscripcion_estado = $presentado->expediente_inscripcion_estado;
+            $expediente_inscripcion->expediente_inscripcion_verificacion = $presentado->expediente_inscripcion_verificacion;
+            $expediente_inscripcion->expediente_inscripcion_fecha = $presentado->expediente_inscripcion_fecha;
+            $expediente_inscripcion->id_expediente_admision = $requerido->id_expediente_admision;
+            $expediente_inscripcion->id_inscripcion = $nueva_inscripcion->id_inscripcion;
+            $expediente_inscripcion->save();
+
+            $seguimientos = ExpedienteInscripcionSeguimiento::where('id_expediente_inscripcion', $presentado->id_expediente_inscripcion)
+                ->where('expediente_inscripcion_seguimiento_estado', 1)
+                ->get();
+            foreach ($seguimientos as $seguimiento) {
+                $seguimiento_nuevo = new ExpedienteInscripcionSeguimiento();
+                $seguimiento_nuevo->id_expediente_inscripcion = $expediente_inscripcion->id_expediente_inscripcion;
+                $seguimiento_nuevo->tipo_seguimiento = $seguimiento->tipo_seguimiento;
+                $seguimiento_nuevo->expediente_inscripcion_seguimiento_estado = 1;
+                $seguimiento_nuevo->save();
+            }
+
+            if ($presentado->expediente_inscripcion_verificacion == 1) {
+                $verificados++;
+            } elseif ($presentado->expediente_inscripcion_verificacion == 2) {
+                $observados++;
+            }
+        }
+
+        // la inscripcion queda verificada solo si tiene todos los expedientes requeridos verificados
+        if ($observados > 0) {
+            $nueva_inscripcion->verificar_expedientes = 2; // observado
+        } elseif ($verificados == $expedientes_requeridos->count()) {
+            $nueva_inscripcion->inscripcion_estado = 1; // inscrito
+            $nueva_inscripcion->verificar_expedientes = 1; // verificado
+        } else {
+            $nueva_inscripcion->verificar_expedientes = 0; // pendiente
+        }
+        $nueva_inscripcion->save();
+
+        // la inscripcion original queda reservada en su proceso
+        $inscripcion->retiro_inscripcion = 1;
+        $inscripcion->save();
+
+        return $nueva_inscripcion;
+    });
+
+    // el traslado ya quedo registrado, si falla la ficha se puede regenerar con "Actualizar Ficha de Inscripción"
+    try {
+        generarFichaInscripcion($nueva_inscripcion->id_inscripcion);
+    } catch (\Throwable $e) {
+        report($e);
+    }
+
+    return Inscripcion::find($nueva_inscripcion->id_inscripcion);
 }
 
 function finalizar_evaluacion($evaluacion, $puntaje)

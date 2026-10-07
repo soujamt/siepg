@@ -29,6 +29,7 @@ class Inscripcion extends Model
         'retiro_inscripcion',
         'id_pago',
         'id_programa_proceso',
+        'id_inscripcion_origen',
         'inscripcion_tipo_programa',
         'es_traslado_externo',
     ];
