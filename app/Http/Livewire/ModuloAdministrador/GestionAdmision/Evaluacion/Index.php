@@ -372,7 +372,15 @@ class Index extends Component
             ->select('inscripcion.*', 'persona.*', 'programa.*')
             ->orderBy($this->sort_nombre == 'nombre_completo' ? 'persona.' . $this->sort_nombre :'evaluacion.' .  $this->sort_nombre, $this->sort_direccion)
             ->paginate($this->cant_paginas);
-        $programas = Programa::where('programa_estado', 1)->where('id_modalidad', 2)->get();
+        // programas ofertados en el proceso de admision activo
+        $programas = Programa::join('programa_plan', 'programa.id_programa', '=', 'programa_plan.id_programa')
+            ->join('programa_proceso', 'programa_plan.id_programa_plan', '=', 'programa_proceso.id_programa_plan')
+            ->where('programa_proceso.id_admision', getAdmision()->id_admision)
+            ->where('programa.programa_estado', 1)
+            ->select('programa.*')
+            ->distinct()
+            ->orderBy('programa.id_programa')
+            ->get();
         return view('livewire.modulo-administrador.gestion-admision.evaluacion.index', [
             'inscripciones' => $inscripciones,
             'programas' => $programas
