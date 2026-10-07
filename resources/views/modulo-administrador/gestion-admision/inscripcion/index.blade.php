@@ -27,6 +27,19 @@
         });
     });
 
+    // Notificacion breve que no interrumpe (acciones dentro de los modales)
+    window.addEventListener('toast-inscripcion', event => {
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: event.detail.icon,
+            title: event.detail.title,
+            showConfirmButton: false,
+            timer: 3500,
+            timerProgressBar: true,
+        });
+    });
+
     //alerta
     window.addEventListener('alertaConfirmacion', event => {
         Swal.fire({

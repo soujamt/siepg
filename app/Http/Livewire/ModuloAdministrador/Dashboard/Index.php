@@ -193,10 +193,15 @@ class Index extends Component
         $this->ingreso_matricula = $ingreso_matricula_sum + $diferencia_matricula_constancia + $diferencia_matricula_constancia_extemporanea;
 
         // Se calcula el ingreso por concepto de inscripciones
+        // el pago de una inscripcion trasladada a otro proceso se cuenta solo en su proceso de origen
         $this->ingreso_inscripcion = Inscripcion::join('pago', 'pago.id_pago', '=', 'inscripcion.id_pago')
             ->join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'inscripcion.id_programa_proceso')
             ->where('programa_proceso.id_admision', $this->filtro_proceso_data)
-            ->where('inscripcion.retiro_inscripcion', 0)
+            ->whereNull('inscripcion.id_inscripcion_origen')
+            ->where(function ($query) {
+                $query->where('inscripcion.retiro_inscripcion', 0)
+                    ->orWhereIn('inscripcion.id_inscripcion', Inscripcion::whereNotNull('id_inscripcion_origen')->select('id_inscripcion_origen'));
+            })
             ->where('pago.pago_estado', 2)
             ->where('pago.pago_verificacion', 2)
             ->sum('pago.pago_monto');
