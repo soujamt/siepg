@@ -27,6 +27,7 @@ class Index extends Component
         $this->inscripcion_total = Inscripcion::join('pago', 'pago.id_pago', '=', 'inscripcion.id_pago')
                                         ->join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'inscripcion.id_programa_proceso')
                                         ->where('programa_proceso.id_admision', $this->filtro_proceso)
+                                        ->whereNull('inscripcion.id_inscripcion_origen') // el pago de una inscripcion trasladada se cuenta en su proceso de origen
                                         ->sum('pago.pago_monto');
         $this->programas_maestria = Inscripcion::join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'inscripcion.id_programa_proceso')
                                         ->join('programa_plan', 'programa_plan.id_programa_plan', '=', 'programa_proceso.id_programa_plan')
@@ -62,6 +63,7 @@ class Index extends Component
             $this->inscripcion_total = Inscripcion::join('pago', 'pago.id_pago', '=', 'inscripcion.id_pago')
                                         ->join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'inscripcion.id_programa_proceso')
                                         ->where('programa_proceso.id_admision', $this->filtro_proceso)
+                                        ->whereNull('inscripcion.id_inscripcion_origen') // el pago de una inscripcion trasladada se cuenta en su proceso de origen
                                         ->sum('pago.pago_monto');
             $this->programas_maestria = Inscripcion::join('programa_proceso', 'programa_proceso.id_programa_proceso', '=', 'inscripcion.id_programa_proceso')
                                         ->join('programa_plan', 'programa_plan.id_programa_plan', '=', 'programa_proceso.id_programa_plan')
