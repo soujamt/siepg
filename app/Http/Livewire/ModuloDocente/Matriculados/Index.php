@@ -2,21 +2,19 @@
 
 namespace App\Http\Livewire\ModuloDocente\Matriculados;
 
-use App\Models\Curso;
 use App\Models\Docente;
 use Livewire\Component;
-use App\Models\Programa;
 use App\Models\ActaDocente;
 use Illuminate\Support\Str;
 use App\Models\DocenteCurso;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\CursoProgramaPlan;
-use App\Models\ProgramaProcesoGrupo;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\reporte\moduloDocente\matriculados\listaMatriculadosExport;
 use App\Models\Matricula\MatriculaCurso as ModelMatriculaCurso;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 
 class Index extends Component
 {
@@ -55,20 +53,7 @@ class Index extends Component
 
     public function mount()
     {
-        $usuario = auth('usuario')->user(); // obtenemos el usuario autenticado
-        $trabajador_tipo_trabajador = $usuario->trabajador_tipo_trabajador; // obtenemos el trabajador_tipo_trabajador del usuario autenticado
-        $trabajador = $trabajador_tipo_trabajador->trabajador; // obtenemos el trabajador del trabajador_tipo_trabajador del usuario autenticado
-        $docente = Docente::where('id_trabajador', $trabajador->id_trabajador)->first(); // obtenemos el docente del trabajador del usuario autenticado
-
-        $this->docente_curso = DocenteCurso::find($this->id_docente_curso);
-        if ($this->docente_curso) {
-            if ($this->docente_curso->id_docente != $docente->id_docente) {
-                abort(403);
-            }
-        }
-        else {
-            abort(403);
-        }
+        $this->docente_curso = $this->consultaDocenteCursoAutorizado()->first() ?? abort(403);
 
         $this->curso_programa_plan = CursoProgramaPlan::find($this->docente_curso->id_curso_programa_plan);
         $this->id_curso_programa_plan = $this->curso_programa_plan->id_curso_programa_plan;
@@ -77,6 +62,16 @@ class Index extends Component
         $this->curso = $this->curso_programa_plan->curso;
         $this->programa = $this->curso_programa_plan->programa_plan->programa;
         $this->grupo = $this->docente_curso->programa_proceso_grupo;
+    }
+
+    private function consultaDocenteCursoAutorizado(): Builder
+    {
+        $idTrabajador = auth('usuario')->user()?->trabajador_tipo_trabajador?->id_trabajador;
+        abort_if($idTrabajador === null, 403);
+
+        return DocenteCurso::query()
+            ->whereKey($this->id_docente_curso)
+            ->whereHas('docente', fn ($query) => $query->where('id_trabajador', $idTrabajador));
     }
 
     public function updated($propertyName)
@@ -263,258 +258,166 @@ class Index extends Component
         $this->emit('render');
     }
 
-    public function generar_acta_notas($id_docente_curso)
+    public function generar_acta_notas()
     {
-        $docente_curso = DocenteCurso::find($id_docente_curso);
-        $fecha2 = date('YmdHis');
+        $rutasGeneradas = [];
 
-        $curso_programa_plan = CursoProgramaPlan::find($docente_curso->id_curso_programa_plan);
-        $curso_model = Curso::find($curso_programa_plan->id_curso);
-        $programa_proceso_grupo = ProgramaProcesoGrupo::find($docente_curso->id_programa_proceso_grupo);
-        $programa_model = Programa::find($curso_programa_plan->programa_plan->id_programa);
-        $docente_model = Docente::find($docente_curso->id_docente);
-        $trabajador = $docente_model->trabajador;
-        $grado_academico = $trabajador->grado_academico;
+        try {
+            $generada = DB::transaction(function () use (&$rutasGeneradas) {
+                $docenteCurso = $this->consultaDocenteCursoAutorizado()->lockForUpdate()->first() ?? abort(403);
+                $idPlan = $docenteCurso->id_curso_programa_plan;
+                $idGrupo = $docenteCurso->id_programa_proceso_grupo;
+                abort_unless(
+                    cantidadAlumnosMatriculadosCurso($idPlan, $idGrupo) === cantidadAlumnosMatriculadosCursoFinalizado($idPlan, $idGrupo),
+                    422,
+                    'Aún hay notas pendientes.'
+                );
 
-        $admision_año = $docente_curso->admision->admision_año;
-
-        $programa = $programa_model->programa_tipo == 1 ? 'Maestría' : 'Doctorado';
-        $subprograma = $programa_model->subprograma;
-        $mencion = $programa_model->mencion ? $programa_model->mencion : '';
-        $curso = strtoupper($curso_model->curso_nombre);
-        $codigo_curso = $curso_model->curso_codigo;
-        $docente = $grado_academico->grado_academico_prefijo . ' ' . strtoupper($trabajador->trabajador_nombre_completo);
-        $codigo_docente = $trabajador->trabajador_numero_documento;
-        $creditos = $curso_model->curso_credito;
-        $ciclo = $curso_model->ciclo->ciclo;
-        $grupo = $programa_proceso_grupo->grupo_detalle;
-
-        $matriculados = ModelMatriculaCurso::query()
-            ->join('tbl_matricula', 'tbl_matricula_curso.id_matricula', 'tbl_matricula.id_matricula')
-            ->join('admitido', 'tbl_matricula.id_admitido', 'admitido.id_admitido')
-            ->join('persona', 'admitido.id_persona', 'persona.id_persona')
-            ->where('admitido.admitido_estado', 1)
-            ->where('tbl_matricula_curso.id_curso_programa_plan', $docente_curso->id_curso_programa_plan)
-            ->where('tbl_matricula_curso.id_programa_proceso_grupo', $docente_curso->id_programa_proceso_grupo)
-            ->where('tbl_matricula_curso.id_docente', $docente_model->id_docente)
-            ->where('tbl_matricula_curso.activo', 1)
-            ->where('tbl_matricula_curso.es_acta_adicional', 0)
-            ->where('tbl_matricula_curso.es_acta_reingreso', 0)
-            ->where('tbl_matricula_curso.es_acta_incorporacion', 0)
-            ->orderBy('persona.nombre_completo', 'asc')
-            ->get();
-        $data_regular = [
-            'matriculados' => $matriculados,
-            'programa' => $programa,
-            'subprograma' => $subprograma,
-            'mencion' => $mencion,
-            'curso' => $curso,
-            'codigo_curso' => $codigo_curso,
-            'docente' => $docente,
-            'codigo_docente' => $codigo_docente,
-            'creditos' => $creditos,
-            'ciclo' => $ciclo,
-            'grupo' => $grupo,
-            'admision_año' => $admision_año,
-            'tipo' => 'regular'
-        ];
-        if ($matriculados->count() > 0) {
-            $nombre_pdf = 'acta-notas-regular-' . date('dmYHis') . '-' . Str::slug($docente, '-') . '.pdf';
-            $path = 'Posgrado/Docente/Actas/';
-            if (!File::isDirectory(public_path($path))) {
-                File::makeDirectory(public_path($path), 0755, true, true);
-            }
-            Pdf::loadView('modulo-docente.acta-evaluacion.ficha-acta-evaluacion', $data_regular)->save(public_path($path . $nombre_pdf));
-
-            // registrar en la db el acta de notas
-            $acta_docente = new ActaDocente();
-            $acta_docente->acta_url = $path . $nombre_pdf;
-            $acta_docente->id_docente_curso = $id_docente_curso;
-            $acta_docente->acta_docente_fecha_creacion = date('Y-m-d H:i:s');
-            $acta_docente->acta_docente_estado = 1;
-            $acta_docente->es_regular = 1;
-            $acta_docente->save();
-        }
-
-        $matriculados_adicional = ModelMatriculaCurso::query()
-            ->join('tbl_matricula', 'tbl_matricula_curso.id_matricula', 'tbl_matricula.id_matricula')
-            ->join('admitido', 'tbl_matricula.id_admitido', 'admitido.id_admitido')
-            ->join('persona', 'admitido.id_persona', 'persona.id_persona')
-            ->where('admitido.admitido_estado', 1)
-            ->where('tbl_matricula_curso.id_curso_programa_plan', $docente_curso->id_curso_programa_plan)
-            ->where('tbl_matricula_curso.id_programa_proceso_grupo', $docente_curso->id_programa_proceso_grupo)
-            ->where('tbl_matricula_curso.id_docente', $docente_model->id_docente)
-            ->where('tbl_matricula_curso.activo', 1)
-            ->where('tbl_matricula_curso.es_acta_adicional', 1)
-            ->where('tbl_matricula_curso.es_acta_reingreso', 0)
-            ->where('tbl_matricula_curso.es_acta_incorporacion', 0)
-            ->orderBy('persona.nombre_completo', 'asc')
-            ->get();
-        $data_adicional = [
-            'matriculados_adicional' => $matriculados_adicional,
-            'programa' => $programa,
-            'subprograma' => $subprograma,
-            'mencion' => $mencion,
-            'curso' => $curso,
-            'codigo_curso' => $codigo_curso,
-            'docente' => $docente,
-            'codigo_docente' => $codigo_docente,
-            'creditos' => $creditos,
-            'ciclo' => $ciclo,
-            'grupo' => $grupo,
-            'admision_año' => $admision_año,
-            'tipo' => 'adicional'
-        ];
-        if ($matriculados_adicional->count() > 0) {
-            $nombre_pdf = 'acta-notas-adicional-' . date('dmYHis') . '-' . Str::slug($docente, '-') . '.pdf';
-            $path = 'Posgrado/Docente/Actas/';
-            if (!File::isDirectory(public_path($path))) {
-                File::makeDirectory(public_path($path), 0755, true, true);
-            }
-            Pdf::loadView('modulo-docente.acta-evaluacion.ficha-acta-evaluacion', $data_adicional)->save(public_path($path . $nombre_pdf));
-
-            // registrar en la db el acta de notas
-            $acta_docente = new ActaDocente();
-            $acta_docente->acta_url = $path . $nombre_pdf;
-            $acta_docente->id_docente_curso = $id_docente_curso;
-            $acta_docente->acta_docente_fecha_creacion = date('Y-m-d H:i:s');
-            $acta_docente->acta_docente_estado = 1;
-            $acta_docente->es_adicional = 1;
-            $acta_docente->save();
-        }
-
-        $matriculados_reingreso = ModelMatriculaCurso::query()
-            ->join('tbl_matricula', 'tbl_matricula_curso.id_matricula', 'tbl_matricula.id_matricula')
-            ->join('admitido', 'tbl_matricula.id_admitido', 'admitido.id_admitido')
-            ->join('persona', 'admitido.id_persona', 'persona.id_persona')
-            ->where('admitido.admitido_estado', 1)
-            ->where('tbl_matricula_curso.id_curso_programa_plan', $docente_curso->id_curso_programa_plan)
-            ->where('tbl_matricula_curso.id_programa_proceso_grupo', $docente_curso->id_programa_proceso_grupo)
-            ->where('tbl_matricula_curso.id_docente', $docente_model->id_docente)
-            ->where('tbl_matricula_curso.activo', 1)
-            ->where('tbl_matricula_curso.es_acta_adicional', 0)
-            ->where('tbl_matricula_curso.es_acta_reingreso', 1)
-            ->where('tbl_matricula_curso.es_acta_incorporacion', 0)
-            ->orderBy('persona.nombre_completo', 'asc')
-            ->get();
-        foreach ($matriculados_reingreso as $reingreso) {
-            $data_reingreso = [
-                'reingreso' => $reingreso,
-                'programa' => $programa,
-                'subprograma' => $subprograma,
-                'mencion' => $mencion,
-                'curso' => $curso,
-                'codigo_curso' => $codigo_curso,
-                'docente' => $docente,
-                'codigo_docente' => $codigo_docente,
-                'creditos' => $creditos,
-                'ciclo' => $ciclo,
-                'grupo' => $grupo,
-                'admision_año' => $admision_año,
-                'tipo' => 'reingreso'
-            ];
-            if ($matriculados_reingreso->count() > 0) {
-                $nombre_pdf = 'acta-notas-reingreso-'. $reingreso->admitido_codigo . '-' . date('dmYHis') . '-' . Str::slug($docente, '-') . '.pdf';
-                $path = 'Posgrado/Docente/Actas/';
-                if (!File::isDirectory(public_path($path))) {
-                    File::makeDirectory(public_path($path), 0755, true, true);
+                $actas = $this->datosActas($docenteCurso);
+                if ($actas === []) {
+                    return false;
                 }
-                Pdf::loadView('modulo-docente.acta-evaluacion.ficha-acta-evaluacion', $data_reingreso)->save(public_path($path . $nombre_pdf));
 
-                // registrar en la db el acta de notas
-                $acta_docente = new ActaDocente();
-                $acta_docente->acta_url = $path . $nombre_pdf;
-                $acta_docente->id_docente_curso = $id_docente_curso;
-                $acta_docente->acta_docente_fecha_creacion = date('Y-m-d H:i:s');
-                $acta_docente->acta_docente_estado = 1;
-                $acta_docente->es_reingreso = 1;
-                $acta_docente->save();
-            }
-        }
+                $directorio = 'Posgrado/Docente/Actas/';
+                File::ensureDirectoryExists(public_path($directorio));
+                $fecha = now();
+                $actasVigentes = ActaDocente::query()
+                    ->where('id_docente_curso', $docenteCurso->getKey())
+                    ->where('acta_docente_estado', 1);
 
-        $matriculados_incorporacion = ModelMatriculaCurso::query()
-            ->join('tbl_matricula', 'tbl_matricula_curso.id_matricula', 'tbl_matricula.id_matricula')
-            ->join('admitido', 'tbl_matricula.id_admitido', 'admitido.id_admitido')
-            ->join('persona', 'admitido.id_persona', 'persona.id_persona')
-            ->where('admitido.admitido_estado', 1)
-            ->where('tbl_matricula_curso.id_curso_programa_plan', $docente_curso->id_curso_programa_plan)
-            ->where('tbl_matricula_curso.id_programa_proceso_grupo', $docente_curso->id_programa_proceso_grupo)
-            ->where('tbl_matricula_curso.id_docente', $docente_model->id_docente)
-            ->where('tbl_matricula_curso.activo', 1)
-            ->where('tbl_matricula_curso.es_acta_adicional', 0)
-            ->where('tbl_matricula_curso.es_acta_reingreso', 0)
-            ->where('tbl_matricula_curso.es_acta_incorporacion', 1)
-            ->orderBy('persona.nombre_completo', 'asc')
-            ->get();
-        foreach ($matriculados_incorporacion as $incorporacion) {
-            $data_incorporacion = [
-                'incorporacion' => $incorporacion,
-                'programa' => $programa,
-                'subprograma' => $subprograma,
-                'mencion' => $mencion,
-                'curso' => $curso,
-                'codigo_curso' => $codigo_curso,
-                'docente' => $docente,
-                'codigo_docente' => $codigo_docente,
-                'creditos' => $creditos,
-                'ciclo' => $ciclo,
-                'grupo' => $grupo,
-                'admision_año' => $admision_año,
-                'tipo' => 'incorporacion'
-            ];
-            if ($matriculados_incorporacion->count() > 0) {
-                $nombre_pdf = 'acta-notas-incorporacion-' . date('dmYHis') . '-' . Str::slug($docente, '-') . '.pdf';
-                $path = 'Posgrado/Docente/Actas/';
-                if (!File::isDirectory(public_path($path))) {
-                    File::makeDirectory(public_path($path), 0755, true, true);
+                if ($actasVigentes->update(['acta_docente_estado' => 0]) === 0) {
+                    ModelMatriculaCurso::query()
+                        ->where('id_curso_programa_plan', $idPlan)
+                        ->where('id_programa_proceso_grupo', $idGrupo)
+                        ->where('id_docente', $docenteCurso->id_docente)
+                        ->where('activo', 1)
+                        ->whereNull('fecha_ingreso_nota')
+                        ->update(['fecha_ingreso_nota' => $fecha->toDateString()]);
                 }
-                Pdf::loadView('modulo-docente.acta-evaluacion.ficha-acta-evaluacion', $data_incorporacion)->save(public_path($path . $nombre_pdf));
 
-                // registrar en la db el acta de notas
-                $acta_docente = new ActaDocente();
-                $acta_docente->acta_url = $path . $nombre_pdf;
-                $acta_docente->id_docente_curso = $id_docente_curso;
-                $acta_docente->acta_docente_fecha_creacion = date('Y-m-d H:i:s');
-                $acta_docente->acta_docente_estado = 1;
-                $acta_docente->es_incorporacion = 1;
-                $acta_docente->save();
-            }
+                foreach ($actas as $datos) {
+                    $tipo = $datos['tipo'];
+                    $codigo = $datos[$tipo]->admitido_codigo ?? null;
+                    $nombre = implode('-', array_filter([
+                        'acta-notas', $tipo, $codigo, $fecha->format('dmYHis'),
+                        Str::slug($datos['docente']), Str::random(10),
+                    ])) . '.pdf';
+                    $ruta = $directorio . $nombre;
+                    $rutaAbsoluta = public_path($ruta);
+                    $rutasGeneradas[] = $rutaAbsoluta;
+
+                    $pdf = Pdf::loadView('modulo-docente.acta-evaluacion.ficha-acta-evaluacion', $datos)->output();
+                    if (File::put($rutaAbsoluta, $pdf) !== strlen($pdf)) {
+                        throw new \RuntimeException('No se pudo guardar el acta de evaluación.');
+                    }
+
+                    ActaDocente::create([
+                        'acta_url' => $ruta,
+                        'id_docente_curso' => $docenteCurso->getKey(),
+                        'acta_docente_fecha_creacion' => $fecha->toDateTimeString(),
+                        'acta_docente_estado' => 1,
+                        'es_' . $tipo => 1,
+                    ]);
+                }
+
+                return true;
+            });
+        } catch (\Throwable $error) {
+            File::delete($rutasGeneradas);
+            throw $error;
         }
 
-        $matriculasCursos = ModelMatriculaCurso::query()
-            ->where('id_curso_programa_plan', $docente_curso->id_curso_programa_plan)
-            ->where('id_programa_proceso_grupo', $docente_curso->id_programa_proceso_grupo)
-            ->where('id_docente', $docente_model->id_docente)
-            ->where('activo', 1)
-            ->get();
-        foreach ($matriculasCursos as $item) {
-            $item->fecha_ingreso_nota = date('Y-m-d');
-            $item->save();
-        }
-
-        // mostrar alerta de que se generó el acta de notas
         $this->dispatchBrowserEvent('alerta_matriculados', [
-            'title' => '¡Éxito!',
-            'text' => 'Se generó el acta de notas correctamente.',
-            'icon' => 'success',
+            'title' => $generada ? '¡Éxito!' : 'Sin notas registradas',
+            'text' => $generada ? 'Se generó el acta de notas correctamente.' : 'No hay notas registradas para generar el acta.',
+            'icon' => $generada ? 'success' : 'warning',
             'confirmButtonText' => 'Aceptar',
-            'color' => 'success'
+            'color' => $generada ? 'success' : 'warning',
         ]);
     }
 
-    public function descargar_actas($acta_docente)
+    private function datosActas(DocenteCurso $docenteCurso): array
     {
-        $array_archivos = [];
-        foreach ($acta_docente as $acta) {
-            $array_archivos[] = [
-                'nombre' => str_replace('Posgrado/Docente/Actas/', '', $acta['acta_url']),
-                'url' => asset($acta['acta_url'])
-            ];
+        $cursoProgramaPlan = $docenteCurso->curso_programa_plan;
+        $curso = $cursoProgramaPlan->curso;
+        $programa = $cursoProgramaPlan->programa_plan->programa;
+        $trabajador = $docenteCurso->docente->trabajador;
+
+        $datosCurso = [
+            'programa' => $programa->programa_tipo == 1 ? 'Maestría' : 'Doctorado',
+            'subprograma' => $programa->subprograma,
+            'mencion' => $programa->mencion ?? '',
+            'curso' => strtoupper($curso->curso_nombre),
+            'codigo_curso' => $curso->curso_codigo,
+            'docente' => $trabajador->grado_academico->grado_academico_prefijo . ' ' . strtoupper($trabajador->trabajador_nombre_completo),
+            'codigo_docente' => $trabajador->trabajador_numero_documento,
+            'creditos' => $curso->curso_credito,
+            'ciclo' => $curso->ciclo->ciclo,
+            'grupo' => $docenteCurso->programa_proceso_grupo->grupo_detalle,
+            'admision_año' => $docenteCurso->admision->admision_año,
+        ];
+
+        $consulta = ModelMatriculaCurso::query()
+            ->select('tbl_matricula_curso.*', 'admitido.admitido_codigo', 'persona.nombre_completo')
+            ->join('tbl_matricula', 'tbl_matricula_curso.id_matricula', 'tbl_matricula.id_matricula')
+            ->join('admitido', 'tbl_matricula.id_admitido', 'admitido.id_admitido')
+            ->join('persona', 'admitido.id_persona', 'persona.id_persona')
+            ->where('admitido.admitido_estado', 1)
+            ->where('tbl_matricula_curso.id_curso_programa_plan', $docenteCurso->id_curso_programa_plan)
+            ->where('tbl_matricula_curso.id_programa_proceso_grupo', $docenteCurso->id_programa_proceso_grupo)
+            ->where('tbl_matricula_curso.id_docente', $docenteCurso->id_docente)
+            // Otra matrícula puede desactivar este registro después de que se evaluó el curso.
+            ->where(function ($query) {
+                $query->whereNotNull('tbl_matricula_curso.nota_promedio_final')
+                    ->orWhere('tbl_matricula_curso.estado', 3);
+            })
+            ->orderBy('persona.nombre_completo');
+
+        $tipos = [
+            'regular' => [0, 0, 0],
+            'adicional' => [1, 0, 0],
+            'reingreso' => [0, 1, 0],
+            'incorporacion' => [0, 0, 1],
+        ];
+        $actas = [];
+
+        foreach ($tipos as $tipo => [$adicional, $reingreso, $incorporacion]) {
+            $matriculados = (clone $consulta)->where([
+                'tbl_matricula_curso.es_acta_adicional' => $adicional,
+                'tbl_matricula_curso.es_acta_reingreso' => $reingreso,
+                'tbl_matricula_curso.es_acta_incorporacion' => $incorporacion,
+            ])->get();
+
+            if ($matriculados->isEmpty()) {
+                continue;
+            }
+
+            $datos = $datosCurso + ['tipo' => $tipo];
+            if ($tipo === 'regular' || $tipo === 'adicional') {
+                $clave = $tipo === 'regular' ? 'matriculados' : 'matriculados_adicional';
+                $actas[] = $datos + [$clave => $matriculados];
+                continue;
+            }
+
+            foreach ($matriculados as $matriculado) {
+                $actas[] = $datos + [$tipo => $matriculado];
+            }
         }
 
-        $this->dispatchBrowserEvent('descargar_actas', [
-            'array_archivos' => $array_archivos
-        ]);
+        return $actas;
+    }
+
+    public function descargar_actas()
+    {
+        $docenteCurso = $this->consultaDocenteCursoAutorizado()->first() ?? abort(403);
+        $archivos = ActaDocente::query()
+            ->where('id_docente_curso', $docenteCurso->getKey())
+            ->where('acta_docente_estado', 1)
+            ->pluck('acta_url')
+            ->map(fn ($ruta) => ['nombre' => basename($ruta), 'url' => asset($ruta)])
+            ->all();
+
+        $this->dispatchBrowserEvent('descargar_actas', ['array_archivos' => $archivos]);
     }
 
     public function exportar_excel_lista_matriculados()
@@ -613,30 +516,13 @@ class Index extends Component
             $this->modo = 'hide';
         }
 
-        // buscamos si el docente genero su acta de notas
-        $mostrar_acta = false;
-        $acta_docente = ActaDocente::query()
+        $mostrar_acta = ActaDocente::query()
             ->where('id_docente_curso', $this->id_docente_curso)
-            ->get();
-        /** @var ActaDocente $acta */
-        foreach ($acta_docente as $acta) {
-            if ($acta->es_regular == 1) {
-                $mostrar_acta = true;
-            }
-            if ($acta->es_adicional == 1) {
-                $mostrar_acta = true;
-            }
-            if ($acta->es_reingreso == 1) {
-                $mostrar_acta = true;
-            }
-            if ($acta->es_reincorporacion == 1) {
-                $mostrar_acta = true;
-            }
-        }
+            ->where('acta_docente_estado', 1)
+            ->exists();
 
         return view('livewire.modulo-docente.matriculados.index', [
-            'acta_docente' => $acta_docente,
-            'mostrar_acta' => $mostrar_acta
+            'mostrar_acta' => $mostrar_acta,
         ]);
     }
 }
