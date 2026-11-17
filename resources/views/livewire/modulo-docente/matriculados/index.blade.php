@@ -19,71 +19,25 @@
             </div>
             <div class="d-flex flex-stack">
                 <div class="d-flex align-items-center text-center gap-2 gap-lg-3 ms-5">
-                    {{-- <a href="{{ route('docente.acta_evaluacion', ['id_docente_curso' => $id_docente_curso]) }}" target="_blank" class="btn btn-info fw-bold">
-                        Acta de Evaluación
-                    </a> --}}
                     @if ($mostrar_acta)
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-info" wire:click="descargar_actas({{ $acta_docente }})">
-                          Descargar Acta de Evaluación
-                        </button>
-                      </div>
-                    @else
-                        <button
-                            type="button"
-                            wire:click="generar_acta_notas({{ $id_docente_curso }})"
-                            class="btn btn-info fw-bold"
-                            style="width: 240px"
-                            @if ($matriculados_count != $matriculados_finalizados_count) disabled @endif
-                            wire:loading.attr="disabled"
-                            wire:target="generar_acta_notas({{ $id_docente_curso }})"
-                            >
-                            <div wire:loading.remove wire:target="generar_acta_notas({{ $id_docente_curso }})">
-                                Generar Acta de Evaluación
-                            </div>
-                            <div wire:loading wire:target="generar_acta_notas({{ $id_docente_curso }})">
-                                Generando <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                            </div>
+                        <button type="button" class="btn btn-info" wire:click="descargar_actas"
+                            wire:loading.attr="disabled" wire:target="generar_acta_notas">
+                            Descargar Acta de Evaluación
                         </button>
                     @endif
-                    {{-- <div class="btn-group">
-                        <button type="button" class="btn btn-info fw-bold dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                          Acta de Notas
-                        </button>
-                        <ul class="dropdown-menu">
-                            @if ($acta_docente)
-                                <li>
-                                    <a
-                                        href="{{ asset($acta_docente->acta_url) }}"
-                                        download
-                                        class="dropdown-item"
-                                        >
-                                        Descargar Acta de Evaluación
-                                    </a>
-                                </li>
-                            @else
-                                <li>
-                                    <a
-                                        wire:click="generar_acta_notas({{ $id_docente_curso }})"
-                                        class="dropdown-item cursor-pointer"
-                                        style="width: 240px"
-                                        @if ($matriculados_count != $matriculados_finalizados_count) disabled @endif
-                                        wire:loading.attr="disabled"
-                                        wire:target="generar_acta_notas({{ $id_docente_curso }})"
-                                        >
-                                        <div wire:loading.remove wire:target="generar_acta_notas({{ $id_docente_curso }})">
-                                            Generar Acta de Evaluación
-                                        </div>
-                                        <div wire:loading wire:target="generar_acta_notas({{ $id_docente_curso }})">
-                                            Generando <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                        </div>
-                                    </a>
-                                </li>
-                            @endif
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Acta Adicional</a></li>
-                        </ul>
-                    </div> --}}
+                    <button type="button"
+                        wire:click="generar_acta_notas"
+                        class="btn {{ $mostrar_acta ? 'btn-light-info' : 'btn-info' }} fw-bold"
+                        @if ($matriculados_count != $matriculados_finalizados_count) disabled @endif
+                        wire:loading.attr="disabled"
+                        wire:target="generar_acta_notas">
+                        <span wire:loading.remove wire:target="generar_acta_notas">
+                            {{ $mostrar_acta ? 'Volver a generar acta' : 'Generar Acta de Evaluación' }}
+                        </span>
+                        <span wire:loading wire:target="generar_acta_notas">
+                            Generando <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                    </button>
                     <button type="button"
                         wire:click="exportar_excel_lista_matriculados"
                         class="btn btn-success fw-bold"
